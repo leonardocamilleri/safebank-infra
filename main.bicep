@@ -208,21 +208,21 @@ module staticWebApp 'modules/static-webapp.bicep' = {
   }
 }
 
-module containerAppService 'modules/container-appservice.bicep' = {
-  name: 'containerAppService-${userAlias}'
-  params: {
-    containerLocation: containerLocation
-    containerName: containerName
-    containerAppServicePlanId: containerAppServicePlanId
-    dockerRegistryName: dockerRegistryName
-    dockerRegistryServerUserName: dockerRegistryServerUserName
-    dockerRegistryServerPassword: dockerRegistryServerPassword
-    dockerRegistryImageName: dockerRegistryImageName
-    dockerRegistryImageVersion: dockerRegistryImageVersion
-    appSettings: appSettings
-    appCommandLine: appCommandLine
-  }
-}
+// module containerAppService 'modules/container-appservice.bicep' = {
+//   name: 'containerAppService-${userAlias}'
+//   params: {
+//     containerLocation: containerLocation
+//     containerName: containerName
+//     containerAppServicePlanId: containerAppServicePlanId
+//     dockerRegistryName: dockerRegistryName
+//     dockerRegistryServerUserName: dockerRegistryServerUserName
+//     dockerRegistryServerPassword: dockerRegistryServerPassword
+//     dockerRegistryImageName: dockerRegistryImageName
+//     dockerRegistryImageVersion: dockerRegistryImageVersion
+//     appSettings: appSettings
+//     appCommandLine: appCommandLine
+//   }
+// }
 
 
 module containerRegistry 'modules/container-registry.bicep' = {
