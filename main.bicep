@@ -71,6 +71,21 @@ param feApiLocation string = ''
 @sys.description('The folder where the build artifacts are located')
 param appArtifactLocation string = 'dist'
 
+// Container App Service
+param containerLocation string = resourceGroup().location
+param containerName string
+param containerAppServicePlanId string
+param dockerRegistryName string
+@secure()
+param dockerRegistryServerUserName string
+@secure()
+param dockerRegistryServerPassword string
+param dockerRegistryImageName string
+param dockerRegistryImageVersion string = 'latest'
+param appSettings array = []
+param appCommandLine string = ''
+
+
 // Container Registry
 @description('The name of the container registry')
 param registryName string
@@ -98,6 +113,18 @@ param tags object = {}
 ])
 param publicNetworkAccess string = 'Enabled'
 
+
+// Key Vault
+@sys.description('The name of the Key Vault')
+param keyVaultName string
+
+// Log Analytics Workspace
+@sys.description('The name of the Log Analytics Workspace')
+param logAnalyticsWorkspaceName string
+
+// App Insights
+@sys.description('The name of the Application Insights instance')
+param appInsightsName string
 
 resource postgresSQLServer 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' = {
   name: postgreSQLServerName
@@ -181,14 +208,82 @@ module staticWebApp 'modules/static-webapp.bicep' = {
   }
 }
 
+module containerAppService 'modules/container-appservice.bicep' = {
+  name: 'containerAppService-${userAlias}'
+  params: {
+    containerLocation: containerLocation
+    containerName: containerName
+    containerAppServicePlanId: containerAppServicePlanId
+    dockerRegistryName: dockerRegistryName
+    dockerRegistryServerUserName: dockerRegistryServerUserName
+    dockerRegistryServerPassword: dockerRegistryServerPassword
+    dockerRegistryImageName: dockerRegistryImageName
+    dockerRegistryImageVersion: dockerRegistryImageVersion
+    appSettings: appSettings
+    appCommandLine: appCommandLine
+  }
+}
+
+
 module containerRegistry 'modules/container-registry.bicep' = {
   name: 'containerRegistry-${userAlias}'
   params: {
-    registryName: registryName
-    registryLocation: registryLocation
+    dockerRegistryName: registryName
+    dockerRegistryLocation: registryLocation
     zoneRedundancy: zoneRedundancy
-    registrySku: registrySku
+    dockerRegistrySku: registrySku
     tags: tags
     publicNetworkAccess: publicNetworkAccess
+  }
+}
+
+
+module keyVault 'modules/key-vault.bicep' = {
+  name: 'keyVault-${userAlias}'
+  params: {
+    name: keyVaultName
+    location: location
+    sku: 'Standard' 
+    accessPolicies: [] 
+    enableVaultForDeployment: true 
+    publicNetworkAccess: 'Enabled' 
+    enableSoftDelete: true
+    softDeleteRetentionInDays: 90
+    enablePurgeProtection: true
+    networkAcls: {
+      defaultAction: 'Allow'
+      bypass: 'None'
+      ipRules: [] 
+      virtualNetworkRules: [] 
+    }
+  }
+}
+
+
+module logAnalyticsWorkspace 'modules/log-analytics-workspace.bicep' = {
+  name: 'logAnalyticsWorkspace-${userAlias}'
+  params: {
+    name: logAnalyticsWorkspaceName
+    location: location
+    sku: 'PerGB2018'
+    tags: {
+      environment: environmentType
+      owner: userAlias
+    }
+  }
+}
+
+
+module appInsights 'modules/app-insights.bicep' = {
+  name: 'appInsights-${userAlias}'
+  params: {
+    name: appInsightsName
+    type: 'web' 
+    regionId: location 
+    tagsArray: {
+      environment: environmentType
+      owner: userAlias
+    }
+    workspaceResourceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId // Link to the Log Analytics Workspace
   }
 }

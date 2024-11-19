@@ -29,8 +29,20 @@
         "staticWebAppLocation": {
             "value": "westeurope"
         },
+        "containerName": {
+            "value": "safebank-container-uat"
+        },
         "registryName": {
             "value": "safebankcruat"
+        },
+        "keyVaultName": {
+            "value": "safebank-kv-uat"
+        },
+        "logAnalyticsWorkspaceName": {
+            "value": "safebank-law-uat"
+        },
+        "appInsightsName": {
+            "value": "safebank-ai-uat"
         }
     }
 }

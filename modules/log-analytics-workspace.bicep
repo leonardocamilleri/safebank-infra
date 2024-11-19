@@ -10,7 +10,7 @@ param sku string
 @description('Tags to assign to the Log Analytics Workspace')
 param tags object = {}
 
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-08-01' = {
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
   name: name
   location: location
   tags: tags
@@ -20,3 +20,5 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-08
     }
   }
 }
+
+output logAnalyticsWorkspaceId string = logAnalyticsWorkspace.id

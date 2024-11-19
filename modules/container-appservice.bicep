@@ -1,6 +1,6 @@
-param location string = resourceGroup().location
-param name string
-param appServicePlanId string
+param containerLocation string = resourceGroup().location
+param containerName string
+param containerAppServicePlanId string
 param dockerRegistryName string
 @secure()
 param dockerRegistryServerUserName string
@@ -15,11 +15,11 @@ var dockerAppSettings = [
   { name: 'DOCKER_REGISTRY_SERVER_USERNAME', value: dockerRegistryServerUserName }
   { name: 'DOCKER_REGISTRY_SERVER_PASSWORD', value: dockerRegistryServerPassword }
 ]
-resource appServiceApp 'Microsoft.Web/sites@2022-03-01' = {
-  name: name
-  location: location
+resource containerAppService 'Microsoft.Web/sites@2022-03-01' = {
+  name: containerName
+  location: containerLocation
   properties: {
-    serverFarmId: appServicePlanId
+    serverFarmId: containerAppServicePlanId
     httpsOnly: true
     siteConfig: {
       linuxFxVersion: 'DOCKER|${dockerRegistryName}.azurecr.io/${dockerRegistryImageName}:${dockerRegistryImageVersion}'
@@ -30,4 +30,4 @@ resource appServiceApp 'Microsoft.Web/sites@2022-03-01' = {
     }
   }
 }
-output appServiceAppHostName string = appServiceApp.properties.defaultHostName
+output containerAppServiceHostName string = containerAppService.properties.defaultHostName

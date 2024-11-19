@@ -1,5 +1,5 @@
-param registryName string
-param registryLocation string = 'westeurope'
+param dockerRegistryName string
+param dockerRegistryLocation string = 'westeurope'
 @allowed([
   'enabled'
   'disabled'
@@ -10,7 +10,7 @@ param zoneRedundancy string = 'disabled'
   'Standard'
   'Premium'
 ])
-param registrySku string = 'Basic'
+param dockerRegistrySku string = 'Basic'
 param tags object = {}
 @allowed([
   'Enabled'
@@ -19,10 +19,10 @@ param tags object = {}
 param publicNetworkAccess string = 'Enabled'
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2022-02-01-preview' = {
-  name: registryName
-  location: registryLocation
+  name: dockerRegistryName
+  location: dockerRegistryLocation
   sku: {
-    name: registrySku
+    name: dockerRegistrySku
   }
   properties: {
     publicNetworkAccess: publicNetworkAccess
