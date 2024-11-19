@@ -18,7 +18,7 @@ param appServiceAPIEnvVarENV =  'uat'
 param staticWebAppName = 'safebank-swa-uat'
 param staticWebAppLocation = 'westeurope'
 
-param containerName = 'safebank-container-uat'
+// param containerName = 'safebank-container-uat'
 
 param registryName = 'safebankcruat'
 

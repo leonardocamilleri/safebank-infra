@@ -72,18 +72,18 @@ param feApiLocation string = ''
 param appArtifactLocation string = 'dist'
 
 // Container App Service
-param containerLocation string = resourceGroup().location
-param containerName string
-param containerAppServicePlanId string
-param dockerRegistryName string
-@secure()
-param dockerRegistryServerUserName string
-@secure()
-param dockerRegistryServerPassword string
-param dockerRegistryImageName string
-param dockerRegistryImageVersion string = 'latest'
-param appSettings array = []
-param appCommandLine string = ''
+// param containerLocation string = resourceGroup().location
+// param containerName string
+// param containerAppServicePlanId string
+// param dockerRegistryName string
+// @secure()
+// param dockerRegistryServerUserName string
+// @secure()
+// param dockerRegistryServerPassword string
+// param dockerRegistryImageName string
+// param dockerRegistryImageVersion string = 'latest'
+// param appSettings array = []
+// param appCommandLine string = ''
 
 
 // Container Registry
