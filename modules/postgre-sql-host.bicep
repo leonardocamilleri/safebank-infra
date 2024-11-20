@@ -1,7 +1,7 @@
 param location string = resourceGroup().location
 param postgreSQLServerName string = 'ie-bank-db-server-dev'
-param postgreSQLDatabaseName string = 'ie-bank-db'
 param postgreSQLAdminLogin string = 'iebankdbadmin'
+
 @secure()
 param postgreSQLAdminPassword string
 
@@ -39,14 +39,4 @@ resource postgreSQLServer 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01'
   }
 }
 
-resource postgreSQLDatabase 'Microsoft.DBforPostgreSQL/flexibleServers/databases@2022-12-01' = {
-  name: postgreSQLDatabaseName
-  parent: postgreSQLServer
-  properties: {
-    charset: 'UTF8'
-    collation: 'en_US.UTF8'
-  }
-}
-
 output postgreSQLServerName string = postgreSQLServer.name
-output postgreSQLDatabaseName string = postgreSQLDatabase.name

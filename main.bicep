@@ -91,7 +91,9 @@ param tags object = {}
 param publicNetworkAccess string = 'Enabled'
 
 // PostgresSQL Database
-
+@sys.description('The PostgreSQL Server admin password')
+@secure()
+param postgreSQLAdminPassword string
 @sys.description('The PostgreSQL Server name')
 @minLength(3)
 @maxLength(24)
@@ -120,7 +122,7 @@ module appService 'modules/app-service.bicep' = {
     appServiceAPIEnvVarENV: appServiceAPIEnvVarENV
   }
   dependsOn: [
-    postgresSQLDatabase
+    postgreSQLDatabaseServer
   ]
 }
 
@@ -154,16 +156,23 @@ module containerRegistry 'modules/container-registry.bicep' = {
   }
 }
 
-module postgresSQLDatabase 'modules/postgre-sql-db.bicep' = {
-  name: 'postgreSQLDB-${userAlias}'
+module postgreSQLDatabaseHost 'modules/postgre-sql-host.bicep' = {
+  name: 'postgreSQLDBHost-${userAlias}'
   params: {
     location: location
     postgreSQLServerName: postgreSQLServerName
-    postgreSQLDatabaseName: postgreSQLDatabaseName
-    postgreSQLAdminLogin: 'iebankdbadmin'
-    postgreSQLAdminPassword: 'IE.Bank.DB.Admin.Pa$$'
+    postgreSQLAdminLogin: 'iebankdbadmin' // This could be passed as a parameter
+    postgreSQLAdminPassword: postgreSQLAdminPassword // This has to be defined in the keyvault as IE.Bank.DB.Admin.Pa$$
   }
 }
 
-output postgreSQLServerName string = postgresSQLDatabase.outputs.postgreSQLServerName
-output postgreSQLDatabaseName string = postgresSQLDatabase.outputs.postgreSQLDatabaseName
+module postgreSQLDatabaseServer 'modules/postgre-sql-server.bicep' = {
+  name: 'postgreSQLDBServer-${userAlias}'
+  params: {
+    postgreSQLServerName: postgreSQLDatabaseHost.outputs.postgreSQLServerName
+    postgreSQLDatabaseName: postgreSQLDatabaseName
+  }
+  dependsOn: [
+    postgreSQLDatabaseHost
+  ]
+}
