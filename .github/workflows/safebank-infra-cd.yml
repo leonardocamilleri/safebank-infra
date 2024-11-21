@@ -1,4 +1,4 @@
-name: safebank-infra
+name: safebank-infra-cd
 
 on:
   workflow_dispatch:

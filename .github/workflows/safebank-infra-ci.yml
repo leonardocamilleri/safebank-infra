@@ -1,4 +1,4 @@
-name: Bsafebank-infra
+name: Bsafebank-infra-ci
 
 on:
   workflow_dispatch:
