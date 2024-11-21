@@ -27,7 +27,7 @@ jobs:
     - name: Run Bicep unit tests
       run: |
         # Test syntax and validation
-        az bicep build --file ./main.bicep --outdir ./compiled
+        az bicep build --file ./main.bicep --outdir ./main.bicep
 
 
     - name: Upload Bicep build artifact
