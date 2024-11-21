@@ -1,19 +1,19 @@
-name: safebank-infra
+name: safebank-infra-cd
 
 on:
-  workflow_dispatch:
-  pull_request:
-    branches:
-      - main
-  push:
+    workflow_dispatch:
+    pull_request:
       branches:
-        - '*'
-      paths-ignore:
-        - 'scripts/**'
+        - main
+    push:
+        branches:
+          - '*'
+        paths-ignore:
+          - 'scripts/**'
 
 env:
-  RESOURCE_GROUP_UAT: BCSAI2024-DEVOPS-STUDENTS-A-UAT
   RESOURCE_GROUP_DEV: BCSAI2024-DEVOPS-STUDENTS-A-DEV
+  RESOURCE_GROUP_UAT: BCSAI2024-DEVOPS-STUDENTS-A-UAT
   RESOURCE_GROUP_PROD: BCSAI2024-DEVOPS-STUDENTS-A-PROD
   SUBSCRIPTION_ID_DEV: e0b9cada-61bc-4b5a-bd7a-52c606726b3b
   SUBSCRIPTION_ID_UAT: e0b9cada-61bc-4b5a-bd7a-52c606726b3b
@@ -21,24 +21,7 @@ env:
   USER_ALIAS: rorosaga
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-
-      # Checkout code
-    - uses: actions/checkout@main
-
-      # Lint Bicep code 
-    - name: Run Bicep linter
-      run: az bicep build --file ./main.bicep
-
-    - name: Upload Bicep build artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: bicep-build
-        path: ./main.bicep 
-
-  deploy-dev:
+deploy-dev:
     # if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     needs: build
@@ -70,7 +53,7 @@ jobs:
         parameters: ./parameters/dev.bicepparam appServiceAPIEnvVarDBPASS=${{ secrets.DBPASS }} appServiceAPIDBHostDBUSER=${{ secrets.DBUSER }}
         deploymentName: ${{ env.USER_ALIAS }}-dev
       
-  deploy-uat:
+deploy-uat:
     if: (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main') || (github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     needs: build
@@ -98,7 +81,6 @@ jobs:
           template: ./main.bicep
           parameters: ./parameters/uat.bicepparam appServiceAPIEnvVarDBPASS=${{ secrets.DBPASS }} appServiceAPIDBHostDBUSER=${{ secrets.DBUSER }}
           deploymentName: ${{ env.USER_ALIAS }}-uat
-
 
   deploy-prod:
     if: github.event_name == 'workflow_dispatch'
