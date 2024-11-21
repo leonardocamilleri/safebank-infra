@@ -18,6 +18,9 @@ jobs:
       # Checkout code
       - uses: actions/checkout@v3
 
+      - name: List files in Workspace
+        run: ls -R
+
       # Lint Bicep files
       - name: Run Bicep Linter
         run: az bicep build --file ./main.bicep
