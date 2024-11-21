@@ -6,8 +6,7 @@ permissions:
 
 on:
   workflow_run:
-    workflows:
-      - safebank-infra-ci
+    workflows: ['safebank-infra-ci']
     types:
       - completed
 
