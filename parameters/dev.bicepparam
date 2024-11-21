@@ -3,6 +3,8 @@ using '../main.bicep'
 param environmentType = 'nonprod'
 param postgreSQLServerName = 'safebank-dbsrv-dev'
 param postgreSQLDatabaseName = 'safebank-db-dev'
+param postgreSQLAdminPassword = 'IE.Bank.DB.Admin.Pa$$'
+
 param appServicePlanName = 'safebank-asp-dev'
 param appServiceAPIAppName = 'safebank-be-dev'
 param appServiceAppName = 'safebank-fe-dev'

@@ -11,6 +11,9 @@
         "postgreSQLDatabaseName": {
             "value": "safebank-db-dev"
         },
+        "postgreSQLAdminPassword":{
+            "value": "IE.Bank.DB.Admin.Pa$$"
+        },
         "appServicePlanName": {
             "value": "safebank-asp-dev"
         },

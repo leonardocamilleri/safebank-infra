@@ -162,7 +162,7 @@ module postgreSQLDatabaseHost 'modules/postgre-sql-host.bicep' = {
     location: location
     postgreSQLServerName: postgreSQLServerName
     postgreSQLAdminLogin: 'iebankdbadmin' // This could be passed as a parameter
-    postgreSQLAdminPassword: postgreSQLAdminPassword // This has to be defined in the keyvault as IE.Bank.DB.Admin.Pa$$
+    postgreSQLAdminPassword: postgreSQLAdminPassword // This has to be defined in the keyvault as IE.Bank.DB.Admin.Pa$$, currently defined in the parameters
   }
 }
 
