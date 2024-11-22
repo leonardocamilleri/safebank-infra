@@ -2,7 +2,8 @@ name: safebank-infra-cd
 
 on:
   workflow_run:
-    workflows: ['safebank-infra-ci']
+    workflows: [safebank-infra-ci]
+    branches: [container_registry]
     types:
       - completed
 
@@ -16,11 +17,7 @@ env:
   USER_ALIAS: rorosaga
 
 jobs:
-  debug-trigger:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Debug Trigger
-        run: echo "Triggered by ${{ github.event_name }} completion"
+
   deploy-dev:
     runs-on: ubuntu-latest
     steps:
