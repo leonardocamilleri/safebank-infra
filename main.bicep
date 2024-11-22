@@ -117,6 +117,8 @@ param publicNetworkAccess string = 'Enabled'
 // Key Vault
 @sys.description('The name of the Key Vault')
 param keyVaultName string
+@sys.description('Role assignments for the Key Vault')
+param keyVaultRoleAssignments array = []
 
 // Log Analytics Workspace
 @sys.description('The name of the Log Analytics Workspace')
@@ -243,19 +245,8 @@ module keyVault 'modules/key-vault.bicep' = {
   params: {
     name: keyVaultName
     location: location
-    sku: 'Standard' 
-    accessPolicies: [] 
     enableVaultForDeployment: true 
-    publicNetworkAccess: 'Enabled' 
-    enableSoftDelete: true
-    softDeleteRetentionInDays: 90
-    enablePurgeProtection: true
-    networkAcls: {
-      defaultAction: 'Allow'
-      bypass: 'None'
-      ipRules: [] 
-      virtualNetworkRules: [] 
-    }
+    roleAssignments: keyVaultRoleAssignments
   }
 }
 

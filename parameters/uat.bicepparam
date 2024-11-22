@@ -1,5 +1,30 @@
 using '../main.bicep'
 
+// SQL Server
+
+// SQL DB
+
+// Satic Website (frontend)
+
+// Container Instance (backend)
+
+// Container Registry
+
+// Key Vault
+param keyVaultName = 'safebank-kv-uat'
+param keyVaultRoleAssignments= [
+  {
+    principalId: '25d8d697-c4a2-479f-96e0-15593a830ae5' // BCSAI2024-DEVOPS-STUDENTS-A-SP
+    roleDefinitionIdOrName: 'Key Vault Secrets User'
+    principalType: 'ServicePrincipal'
+  }
+]
+
+
+// Log Analytics Workspace
+
+// Application Insights
+
 param environmentType = 'nonprod'
 param postgreSQLServerName = 'safebank-dbsrv-uat'
 param postgreSQLDatabaseName = 'safebank-db-uat'
@@ -21,8 +46,6 @@ param staticWebAppLocation = 'westeurope'
 // param containerName = 'safebank-container-uat'
 
 param registryName = 'safebankcruat'
-
-param keyVaultName = 'safebank-kv-uat'
 
 param logAnalyticsWorkspaceName = 'safebank-law-uat'
 
