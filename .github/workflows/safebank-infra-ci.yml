@@ -1,0 +1,35 @@
+name: safebank-infra-ci
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+  push:
+      branches:
+        - '*'
+      paths-ignore:
+        - 'scripts/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout code
+      - uses: actions/checkout@v3
+
+      # Lint Bicep files
+      - name: Run Bicep Linter
+        run: az bicep build --file ./main.bicep
+
+      # Validate Bicep syntax
+      - name: Validate Bicep File
+        run: az bicep build --file ./main.bicep
+
+      # Upload the original Bicep file as an artifact
+      - name: Upload Bicep File
+        uses: actions/upload-artifact@v4
+        with:
+          name: bicep-files
+          path: ./main.bicep
+
