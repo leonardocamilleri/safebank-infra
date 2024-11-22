@@ -196,7 +196,7 @@ module appService 'modules/app-service.bicep' = {
     appServiceAPIEnvVarENV: appServiceAPIEnvVarENV
   }
   dependsOn: [
-    postgreSQLDatabaseServer
+    postgresSQLServer
   ]
 }
 
