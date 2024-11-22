@@ -90,6 +90,80 @@ param tags object = {}
 ])
 param publicNetworkAccess string = 'Enabled'
 
+// Key Vault
+@description('The name of the Key Vault')
+param keyVaultName string = 'safebank-kv-dev'
+@sys.description('The role assignments for the Key Vault')
+param keyVaultRoleAssignments array = []
+
+module keyVault 'modules/key-vault.bicep' = {
+  name: 'kv-${userAlias}'
+  params: {
+    name: keyVaultName
+    location: location
+    enableVaultForDeployment: true
+    roleAssignments: keyVaultRoleAssignments
+  }
+}
+
+
+resource postgresSQLServer 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' = {
+  name: postgreSQLServerName
+  location: location
+  sku: {
+    name: 'Standard_B1ms'
+    tier: 'Burstable'
+  }
+  properties: {
+    // administratorLogin: 'iebankdbadmin'
+    // administratorLoginPassword: 'IE.Bank.DB.Admin.Pa$$'
+    createMode: 'Default'
+    highAvailability: {
+      mode: 'Disabled'
+      standbyAvailabilityZone: ''
+    }
+    storage: {
+      storageSizeGB: 32
+    }
+    backup: {
+      backupRetentionDays: 7
+      geoRedundantBackup: 'Disabled'
+    }
+    version: '15'
+    authConfig: { activeDirectoryAuth: 'Enabled', passwordAuth: 'Enabled', tenantId: subscription().tenantId }
+  }
+
+  resource postgresSQLServerFirewallRules 'firewallRules@2022-12-01' = {
+    name: 'AllowAllAzureServicesAndResourcesWithinAzureIps'
+    properties: {
+      endIpAddress: '0.0.0.0'
+      startIpAddress: '0.0.0.0'
+    }
+  }
+}
+
+resource postgresSQLDatabase 'Microsoft.DBforPostgreSQL/flexibleServers/databases@2022-12-01' = {
+  name: postgreSQLDatabaseName
+  parent: postgresSQLServer
+  properties: {
+    charset: 'UTF8'
+    collation: 'en_US.UTF8'
+  }
+}
+
+resource postgreSQLAdministrators 'administrators@2022-12-01' = {
+  name: postgreSQLAdminServicePrincipalObjectId
+  properties: {
+    principalName: postgreSQLAdminServicePrincipalName
+    principalType: 'ServicePrincipal'
+    tenantId: subscription().tenantId
+  }
+  dependsOn: [
+    postgresSQLServerFirewallRules
+  ]
+}
+
+output id string = postgresSQLServer.id
 // PostgresSQL Database
 @sys.description('The PostgreSQL Server admin password')
 @secure()
@@ -156,23 +230,11 @@ module containerRegistry 'modules/container-registry.bicep' = {
   }
 }
 
-module postgreSQLDatabaseHost 'modules/postgre-sql-host.bicep' = {
-  name: 'postgreSQLDBHost-${userAlias}'
-  params: {
-    location: location
-    postgreSQLServerName: postgreSQLServerName
-    postgreSQLAdminLogin: 'iebankdbadmin' // This could be passed as a parameter
-    postgreSQLAdminPassword: postgreSQLAdminPassword // This has to be defined in the keyvault as IE.Bank.DB.Admin.Pa$$, currently defined in the parameters
-  }
+var acrUsernameSecretName = 'acr-username'
+var acrPassword0SecretName = 'acr-password0'
+var acrPassword1SecretName = 'acr-password1'
+
+resource keyVaultReference 'Microsoft.KeyVault/vaults@2023-07-01'existing = {
+  name: keyVaultName
 }
 
-module postgreSQLDatabaseServer 'modules/postgre-sql-server.bicep' = {
-  name: 'postgreSQLDBServer-${userAlias}'
-  params: {
-    postgreSQLServerName: postgreSQLDatabaseHost.outputs.postgreSQLServerName
-    postgreSQLDatabaseName: postgreSQLDatabaseName
-  }
-  dependsOn: [
-    postgreSQLDatabaseHost
-  ]
-}
