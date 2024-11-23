@@ -7,7 +7,7 @@ param environmentType string = 'nonprod'
 @sys.description('The user alias to add to the deployment name')
 param userAlias string = 'rorosaga'
 @sys.description('The Azure location where the resources will be deployed')
-param location string = resourceGroup().location
+param location string = 'northeurope'
 
 // @sys.description('The App Service Plan name')
 // @minLength(3)
