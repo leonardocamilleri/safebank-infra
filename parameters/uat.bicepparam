@@ -9,6 +9,8 @@ using '../main.bicep'
 // Container Instance (backend)
 
 // Container Registry
+param registryName = 'safebankcruat'
+
 
 // Key Vault
 param keyVaultName = 'safebank-kv-uat'
@@ -44,8 +46,6 @@ param staticWebAppName = 'safebank-swa-uat'
 param staticWebAppLocation = 'westeurope'
 
 // param containerName = 'safebank-container-uat'
-
-// param registryName = 'safebankcruat'
 
 param logAnalyticsWorkspaceName = 'safebank-law-uat'
 

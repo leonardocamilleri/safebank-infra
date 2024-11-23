@@ -87,32 +87,8 @@ param appArtifactLocation string = 'dist'
 
 
 // Container Registry
-// @description('The name of the container registry')
-// param registryName string
-// @description('The Azure location where the container registry should be deployed')
-// param registryLocation string = 'westeurope'
-// @description('Zone redundancy for the container registry')
-// @allowed([
-//   'enabled'
-//   'disabled'
-// ])
-// param zoneRedundancy string = 'disabled'
-// @description('The SKU for the container registry')
-// @allowed([
-//   'Basic'
-//   'Standard'
-//   'Premium'
-// ])
-// param registrySku string = 'Basic'
-// @description('Tags to apply to the container registry')
-// param tags object = {}
-// @description('Public network access for the container registry')
-// @allowed([
-//   'Enabled'
-//   'Disabled'
-// ])
-// param publicNetworkAccess string = 'Enabled'
-
+@description('The name of the container registry')
+param registryName string
 
 // Key Vault
 @sys.description('The name of the Key Vault')
@@ -227,17 +203,14 @@ module staticWebApp 'modules/static-webapp.bicep' = {
 // }
 
 
-// module containerRegistry 'modules/container-registry.bicep' = {
-//   name: 'containerRegistry-${userAlias}'
-//   params: {
-//     dockerRegistryName: registryName
-//     dockerRegistryLocation: registryLocation
-//     zoneRedundancy: zoneRedundancy
-//     dockerRegistrySku: registrySku
-//     tags: tags
-//     publicNetworkAccess: publicNetworkAccess
-//   }
-// }
+module containerRegistry 'modules/container-registry.bicep' = {
+  name: 'containerRegistry-${userAlias}'
+  params: {
+    name: registryName
+    location: location
+    
+  }
+}
 
 
 module keyVault 'modules/key-vault.bicep' = {

@@ -1,34 +1,17 @@
-param dockerRegistryName string
-param dockerRegistryLocation string = 'westeurope'
-@allowed([
-  'enabled'
-  'disabled'
-])
-param zoneRedundancy string = 'disabled'
-@allowed([
-  'Basic'
-  'Standard'
-  'Premium'
-])
-param dockerRegistrySku string = 'Basic'
-param tags object = {}
-@allowed([
-  'Enabled'
-  'Disabled'
-])
-param publicNetworkAccess string = 'Enabled'
+param name string
+param location string = resourceGroup().location
+param sku string = 'Basic'
+param adminUserEnabled bool = true
 
-resource containerRegistry 'Microsoft.ContainerRegistry/registries@2022-02-01-preview' = {
-  name: dockerRegistryName
-  location: dockerRegistryLocation
+resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
+  name: name
+  location: location
   sku: {
-    name: dockerRegistrySku
+    name: sku
   }
   properties: {
-    publicNetworkAccess: publicNetworkAccess
-    zoneRedundancy: zoneRedundancy
+    adminUserEnabled: adminUserEnabled
   }
-  tags: tags
 }
 
 output containerRegistryName string = containerRegistry.name
