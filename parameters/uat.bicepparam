@@ -16,7 +16,18 @@ param feRepositoryUrl = 'https://github.com/ie-safebank/safebank-fe'
 param staticWebAppTokenName = 'swa-token'
 
 // Container Instance (backend)
-// param containerName = 'safebank-container-uat'
+param containerName = 'safebank-container-be-uat'
+param dockerRegistryImageName = 'safebank-be'
+param dockerRegistryImageVersion = 'latest'
+param containerAppSettings = [
+  { name: 'ENV', value: 'uat' }
+  { name: 'DBHOST', value: 'safebank-dbsrv-uat.postgres.database.azure.com' }
+  { name: 'DBNAME', value: 'safebank-db-uat' }
+  { name: 'DBUSER', value: 'safebank-be-uat' }
+  { name: 'FLASK_DEBUG', value: '1' }
+  { name: 'SCM_DO_BUILD_DURING_DEPLOYMENT', value:'true' }
+]
+
 
 // Container Registry
 param registryName = 'safebankcruat'
@@ -45,18 +56,5 @@ param logAnalyticsWorkspaceName = 'safebank-law-uat'
 param appInsightsName = 'safebank-ai-uat'
 
 
-// param environmentType = 'nonprod'
-// param appServicePlanName = 'safebank-asp-uat'
-// param appServiceAPIAppName = 'safebank-be-uat'
-// param appServiceAppName = 'safebank-fe-uat'
-// param location = 'North Europe'
-// param appServiceAPIDBHostFLASK_APP =  'iebank_api\\__init__.py'
-// param appServiceAPIDBHostFLASK_DEBUG =  '1'
-// param appServiceAPIDBHostDBUSER = 'github-secret-replaced-in-workflow'
-// param appServiceAPIEnvVarDBPASS =  'github-secret-replaced-in-workflow'
-// param appServiceAPIEnvVarDBHOST =  'safebank-dbsrv-uat.postgres.database.azure.com'
-// param appServiceAPIEnvVarDBNAME =  'safebank-db-uat'
-// param appServiceAPIEnvVarENV =  'uat'
-
-
-
+// App Service Plan
+param appServicePlanName = 'safebank-asp-uat'

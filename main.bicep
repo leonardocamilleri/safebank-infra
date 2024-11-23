@@ -9,33 +9,18 @@ param userAlias string = 'rorosaga'
 @sys.description('The Azure location where the resources will be deployed')
 param location string = 'northeurope'
 
-// @sys.description('The App Service Plan name')
-// @minLength(3)
-// @maxLength(24)
-// param appServicePlanName string = 'ie-bank-app-sp-dev'
-// @sys.description('The Web App name (frontend)')
-// @minLength(3)
-// @maxLength(24)
-// param appServiceAppName string = 'ie-bank-dev'
-// @sys.description('The API App name (backend)')
-// @minLength(3)
-// @maxLength(24)
-// param appServiceAPIAppName string = 'ie-bank-api-dev'
-// @sys.description('The value for the environment variable ENV')
-// param appServiceAPIEnvVarENV string
-// @sys.description('The value for the environment variable DBHOST')
-// param appServiceAPIEnvVarDBHOST string
-// @sys.description('The value for the environment variable DBNAME')
-// param appServiceAPIEnvVarDBNAME string
-// @sys.description('The value for the environment variable DBPASS')
-// @secure()
-// param appServiceAPIEnvVarDBPASS string
-// @sys.description('The value for the environment variable DBUSER')
-// param appServiceAPIDBHostDBUSER string
-// @sys.description('The value for the environment variable FLASK_APP')
-// param appServiceAPIDBHostFLASK_APP string
-// @sys.description('The value for the environment variable FLASK_DEBUG')
-// param appServiceAPIDBHostFLASK_DEBUG string
+// App Service Plan
+@sys.description('The name of the App Service Plan')
+param appServicePlanName string
+
+module appServicePlan 'modules/app-service-plan.bicep' = {
+  name: 'appServicePlan-${userAlias}'
+  params: {
+    location: location
+    name: appServicePlanName
+    sku: 'B1'
+  }
+}
 
 
 // PostgreSQL Server
@@ -72,7 +57,25 @@ module postgreSQLDatabase 'modules/postgre-sql-db.bicep' = {
   ]
 }
 
+// Key Vault
+@sys.description('The name of the Key Vault')
+param keyVaultName string
+@sys.description('Role assignments for the Key Vault')
+param keyVaultRoleAssignments array = []
 
+module keyVault 'modules/key-vault.bicep' = {
+  name: 'keyVault-${userAlias}'
+  params: {
+    name: keyVaultName
+    location: location
+    enableVaultForDeployment: true 
+    roleAssignments: keyVaultRoleAssignments
+  }
+}
+
+resource keyVaultReference 'Microsoft.KeyVault/vaults@2022-07-01'existing = {
+  name: keyVaultName
+}
 
 // Static Web App
 @sys.description('The name of the Static Web App')
@@ -93,21 +96,6 @@ module staticWebApp 'modules/static-webapp.bicep' = {
     tokenName: staticWebAppTokenName
   }
 }
-
-
-// Container App Service
-// param containerLocation string = resourceGroup().location
-// param containerName string
-// param containerAppServicePlanId string
-// param dockerRegistryName string
-// @secure()
-// param dockerRegistryServerUserName string
-// @secure()
-// param dockerRegistryServerPassword string
-// param dockerRegistryImageName string
-// param dockerRegistryImageVersion string = 'latest'
-// param appSettings array = []
-// param appCommandLine string = ''
 
 
 // Container Registry
@@ -133,19 +121,25 @@ module containerRegistry 'modules/container-registry.bicep' = {
 }
 
 
-// Key Vault
-@sys.description('The name of the Key Vault')
-param keyVaultName string
-@sys.description('Role assignments for the Key Vault')
-param keyVaultRoleAssignments array = []
+// Container App Service
+param containerName string
+param dockerRegistryImageName string
+param dockerRegistryImageVersion string
+param containerAppSettings array
 
-module keyVault 'modules/key-vault.bicep' = {
-  name: 'keyVault-${userAlias}'
+module containerAppService 'modules/container-appservice.bicep' = {
+  name: 'containerAppService-${userAlias}'
   params: {
-    name: keyVaultName
     location: location
-    enableVaultForDeployment: true 
-    roleAssignments: keyVaultRoleAssignments
+    name: containerName
+    appServicePlanId: appServicePlan.outputs.id
+    registryName: registryName
+    registryServerUserName: keyVaultReference.getSecret(containerRegistryUsernameSecretName)
+    registryServerPassword: keyVaultReference.getSecret(containerRegistryPassword0SecretName)
+    registryImageName: dockerRegistryImageName
+    registryImageVersion: dockerRegistryImageVersion
+    appSettings: containerAppSettings
+    appCommandLine: ''
   }
 }
 
@@ -186,51 +180,3 @@ module appInsights 'modules/app-insights.bicep' = {
     workspaceResourceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId // Link to the Log Analytics Workspace
   }
 }
-
-
-
-
-
-// module appService 'modules/app-service.bicep' = {
-//   name: 'appService-${userAlias}'
-//   params: {
-//     location: location
-//     environmentType: environmentType
-//     appServiceAppName: appServiceAppName
-//     appServiceAPIAppName: appServiceAPIAppName
-//     appServicePlanName: appServicePlanName
-//     appServiceAPIDBHostDBUSER: appServiceAPIDBHostDBUSER
-//     appServiceAPIDBHostFLASK_APP: appServiceAPIDBHostFLASK_APP
-//     appServiceAPIDBHostFLASK_DEBUG: appServiceAPIDBHostFLASK_DEBUG
-//     appServiceAPIEnvVarDBHOST: appServiceAPIEnvVarDBHOST
-//     appServiceAPIEnvVarDBNAME: appServiceAPIEnvVarDBNAME
-//     appServiceAPIEnvVarDBPASS: appServiceAPIEnvVarDBPASS
-//     appServiceAPIEnvVarENV: appServiceAPIEnvVarENV
-//   }
-//   dependsOn: [
-//     postgresSQLDatabase
-//   ]
-// }
-
-// output appServiceAppHostName string = appService.outputs.appServiceAppHostName
-
-
-// module containerAppService 'modules/container-appservice.bicep' = {
-//   name: 'containerAppService-${userAlias}'
-//   params: {
-//     containerLocation: containerLocation
-//     containerName: containerName
-//     containerAppServicePlanId: containerAppServicePlanId
-//     dockerRegistryName: dockerRegistryName
-//     dockerRegistryServerUserName: dockerRegistryServerUserName
-//     dockerRegistryServerPassword: dockerRegistryServerPassword
-//     dockerRegistryImageName: dockerRegistryImageName
-//     dockerRegistryImageVersion: dockerRegistryImageVersion
-//     appSettings: appSettings
-//     appCommandLine: appCommandLine
-//   }
-// }
-
-
-
-
