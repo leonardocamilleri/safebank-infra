@@ -11,6 +11,9 @@ using '../main.bicep'
 // Container Registry
 param registryName = 'safebankcruat'
 param registryLocation = 'westeurope'
+param containerRegistryUsernameSecretName = 'acr-username'
+param containerRegistryPassword0SecretName = 'acr-password0'
+param containerRegistryPassword1SecretName = 'acr-password1'
 
 
 // Key Vault

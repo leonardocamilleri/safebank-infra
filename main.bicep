@@ -91,6 +91,23 @@ param appArtifactLocation string = 'dist'
 param registryName string
 @description('The location of the container registry')
 param registryLocation string
+param containerRegistryUsernameSecretName string 
+param containerRegistryPassword0SecretName string 
+param containerRegistryPassword1SecretName string 
+
+module containerRegistry 'modules/container-registry.bicep' = {
+  name: 'containerRegistry-${userAlias}'
+  params: {
+    name: registryName
+    location: registryLocation
+    keyVaultResourceId: keyVault.outputs.keyVaultId
+    usernameSecretName: containerRegistryUsernameSecretName
+    password0SecretName: containerRegistryPassword0SecretName
+    password1SecretName: containerRegistryPassword1SecretName
+    
+  }
+}
+
 
 // Key Vault
 @sys.description('The name of the Key Vault')
@@ -203,16 +220,6 @@ module staticWebApp 'modules/static-webapp.bicep' = {
 //     appCommandLine: appCommandLine
 //   }
 // }
-
-
-module containerRegistry 'modules/container-registry.bicep' = {
-  name: 'containerRegistry-${userAlias}'
-  params: {
-    name: registryName
-    location: registryLocation
-    
-  }
-}
 
 
 module keyVault 'modules/key-vault.bicep' = {
