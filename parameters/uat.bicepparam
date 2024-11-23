@@ -1,8 +1,13 @@
 using '../main.bicep'
 
 // SQL Server
+param postgreSQLServerName = 'safebank-dbsrv-uat'
+param postgreSQLAdminLogin = 'iebankdbadmin'
+param postgreSQLAdminPassword = 'IE.Bank.DB.Admin.Pa$$'
+
 
 // SQL DB
+param postgreSQLDatabaseName = 'safebank-db-uat'
 
 // Satic Website (frontend)
 param staticWebAppName = 'safebank-swa-uat'
@@ -11,6 +16,7 @@ param feRepositoryUrl = 'https://github.com/ie-safebank/safebank-fe'
 param staticWebAppTokenName = 'swa-token'
 
 // Container Instance (backend)
+// param containerName = 'safebank-container-uat'
 
 // Container Registry
 param registryName = 'safebankcruat'
@@ -32,12 +38,14 @@ param keyVaultRoleAssignments= [
 
 
 // Log Analytics Workspace
+param logAnalyticsWorkspaceName = 'safebank-law-uat'
+
 
 // Application Insights
+param appInsightsName = 'safebank-ai-uat'
+
 
 param environmentType = 'nonprod'
-param postgreSQLServerName = 'safebank-dbsrv-uat'
-param postgreSQLDatabaseName = 'safebank-db-uat'
 param appServicePlanName = 'safebank-asp-uat'
 param appServiceAPIAppName = 'safebank-be-uat'
 param appServiceAppName = 'safebank-fe-uat'
@@ -52,8 +60,3 @@ param appServiceAPIEnvVarENV =  'uat'
 
 
 
-// param containerName = 'safebank-container-uat'
-
-param logAnalyticsWorkspaceName = 'safebank-law-uat'
-
-param appInsightsName = 'safebank-ai-uat'
