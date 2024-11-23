@@ -5,6 +5,10 @@ using '../main.bicep'
 // SQL DB
 
 // Satic Website (frontend)
+param staticWebAppName = 'safebank-swa-uat'
+param staticWebAppLocation = 'westeurope'
+param feRepositoryUrl = 'https://github.com/ie-safebank/safebank-fe'
+param staticWebAppTokenName = 'swa-token'
 
 // Container Instance (backend)
 
@@ -46,8 +50,7 @@ param appServiceAPIEnvVarDBHOST =  'safebank-dbsrv-uat.postgres.database.azure.c
 param appServiceAPIEnvVarDBNAME =  'safebank-db-uat'
 param appServiceAPIEnvVarENV =  'uat'
 
-param staticWebAppName = 'safebank-swa-uat'
-param staticWebAppLocation = 'westeurope'
+
 
 // param containerName = 'safebank-container-uat'
 

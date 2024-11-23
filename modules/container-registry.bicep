@@ -23,7 +23,7 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-07-01' =
 }
 
 // Reference the existing Key Vault
-resource adminCredentialsKeyVault 'Microsoft.KeyVault/vaults@2021-10-01' existing = {
+resource adminCredentialsKeyVault 'Microsoft.KeyVault/vaults@2022-07-01' existing = {
   name: last(split(keyVaultResourceId, '/')) // Extract the name from the resource ID
 }
 

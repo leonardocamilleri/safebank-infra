@@ -1,28 +1,25 @@
-param staticWebAppName string
-param staticWebAppLocation string
-@allowed([
-  'Free'
-  'Standard'
-])
-param staticWebAppSkuName string = 'Free'
-param staticWebAppSkuCode string = 'Free'
-param feRepositoryUrl string = 'https://github.com/rorosaga/safebank-fe'
+param name string
+param location string = resourceGroup().location
+param sku string = 'Free'
+param url string 
 param feBranch string = 'main'
-@secure()
 param feRepoToken string = ''
 param feAppLocation string = '/'
 param feApiLocation string = ''
 param appArtifactLocation string = 'dist'
 
+param keyVaultResourceId string
+#disable-next-line secure-secrets-in-params
+param tokenName string
+
 resource staticWebApp 'Microsoft.Web/staticSites@2022-09-01' = {
-  name: staticWebAppName
-  location: staticWebAppLocation
+  name: name
+  location: location
   sku: {
-    tier: staticWebAppSkuName
-    name: staticWebAppSkuCode
+    name: sku
   }
   properties: {
-    repositoryUrl: feRepositoryUrl
+    repositoryUrl: url
     branch: feBranch
     repositoryToken: feRepoToken
     buildProperties: {
@@ -32,3 +29,20 @@ resource staticWebApp 'Microsoft.Web/staticSites@2022-09-01' = {
     }
   }
 }
+
+// Reference the existing Key Vault
+resource adminCredentialsKeyVault 'Microsoft.KeyVault/vaults@2022-07-01' existing = {
+  name: last(split(keyVaultResourceId, '/')) // Extract the name from the resource ID
+}
+
+// Store the static web app token in Key Vault
+resource secretStaticWebAppToken 'Microsoft.KeyVault/vaults/secrets@2023-02-01' = {
+  name: tokenName
+  parent: adminCredentialsKeyVault
+  properties: {
+    value: staticWebApp.listSecrets().properties.apiKey
+  }
+}
+
+
+

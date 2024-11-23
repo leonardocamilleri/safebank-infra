@@ -47,29 +47,23 @@ param appServiceAPIDBHostFLASK_DEBUG string
 // Static Web App
 @sys.description('The name of the Static Web App')
 param staticWebAppName string
-@sys.description('The Azure location where the Static Web App should be deployed')
+@sys.description('The location of the Static Web App')
 param staticWebAppLocation string
-@sys.description('The pricing tier for the Static Web App')
-@allowed([
-  'Free'
-  'Standard'
-])
-param staticWebAppSkuName string = 'Free'
-@sys.description('The SKU code for the pricing tier')
-param staticWebAppSkuCode string = 'Free'
-@sys.description('The URL of the repository where the source code is located')
-param feRepositoryUrl string = 'https://github.com/rorosaga/safebank-fe'
-@sys.description('The branch of the repository to use for deployments')
-param feBranch string = 'main'
-@sys.description('A secure token for accessing the repository if it is private')
-@secure()
-param feRepoToken string = ''
-@sys.description('The folder containing the app code relative to the repository root')
-param feAppLocation string = '/'
-@sys.description('The folder containing the API code relative to the repository root')
-param feApiLocation string = ''
-@sys.description('The folder where the build artifacts are located')
-param appArtifactLocation string = 'dist'
+@sys.description('The URL of the repo with the Web App')
+param feRepositoryUrl string
+param staticWebAppTokenName string
+
+module staticWebApp 'modules/static-webapp.bicep' = {
+  name: 'staticWebApp-${userAlias}'
+  params: {
+    name: staticWebAppName
+    location: staticWebAppLocation
+    url: feRepositoryUrl
+    keyVaultResourceId: keyVault.outputs.keyVaultId
+    tokenName: staticWebAppTokenName
+  }
+}
+
 
 // Container App Service
 // param containerLocation string = resourceGroup().location
@@ -189,21 +183,6 @@ module appService 'modules/app-service.bicep' = {
 
 output appServiceAppHostName string = appService.outputs.appServiceAppHostName
 
-module staticWebApp 'modules/static-webapp.bicep' = {
-  name: 'staticWebApp-${userAlias}'
-  params: {
-    staticWebAppName: staticWebAppName
-    staticWebAppLocation: staticWebAppLocation
-    staticWebAppSkuName: staticWebAppSkuName
-    staticWebAppSkuCode: staticWebAppSkuCode
-    feRepositoryUrl: feRepositoryUrl
-    feBranch: feBranch
-    feRepoToken: feRepoToken
-    feAppLocation: feAppLocation
-    feApiLocation: feApiLocation
-    appArtifactLocation: appArtifactLocation
-  }
-}
 
 // module containerAppService 'modules/container-appservice.bicep' = {
 //   name: 'containerAppService-${userAlias}'
