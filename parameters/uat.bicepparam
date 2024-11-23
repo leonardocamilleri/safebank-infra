@@ -45,7 +45,7 @@ param staticWebAppLocation = 'westeurope'
 
 // param containerName = 'safebank-container-uat'
 
-param registryName = 'safebankcruat'
+// param registryName = 'safebankcruat'
 
 param logAnalyticsWorkspaceName = 'safebank-law-uat'
 
