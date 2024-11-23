@@ -89,6 +89,8 @@ param appArtifactLocation string = 'dist'
 // Container Registry
 @description('The name of the container registry')
 param registryName string
+@description('The location of the container registry')
+param registryLocation string
 
 // Key Vault
 @sys.description('The name of the Key Vault')
@@ -207,7 +209,7 @@ module containerRegistry 'modules/container-registry.bicep' = {
   name: 'containerRegistry-${userAlias}'
   params: {
     name: registryName
-    location: location
+    location: registryLocation
     
   }
 }

@@ -10,6 +10,7 @@ using '../main.bicep'
 
 // Container Registry
 param registryName = 'safebankcruat'
+param registryLocation = 'westeurope'
 
 
 // Key Vault
