@@ -1,21 +1,61 @@
 using '../main.bicep'
 
-param environmentType = 'nonprod'
+// SQL Server
 param postgreSQLServerName = 'safebank-dbsrv-uat'
-param postgreSQLDatabaseName = 'safebank-db-uat'
-param appServicePlanName = 'safebank-asp-uat'
-param appServiceAPIAppName = 'safebank-be-uat'
-param appServiceAppName = 'safebank-fe-uat'
-param location = 'North Europe'
-param appServiceAPIDBHostFLASK_APP =  'iebank_api\\__init__.py'
-param appServiceAPIDBHostFLASK_DEBUG =  '1'
-param appServiceAPIDBHostDBUSER = 'github-secret-replaced-in-workflow'
-param appServiceAPIEnvVarDBPASS =  'github-secret-replaced-in-workflow'
-param appServiceAPIEnvVarDBHOST =  'safebank-dbsrv-uat.postgres.database.azure.com'
-param appServiceAPIEnvVarDBNAME =  'safebank-db-uat'
-param appServiceAPIEnvVarENV =  'uat'
+param postgreSQLAdminLogin = 'iebankdbadmin'
+param postgreSQLAdminPassword = 'IE.Bank.DB.Admin.Pa$$'
 
+
+// SQL DB
+param postgreSQLDatabaseName = 'safebank-db-uat'
+
+// Satic Website (frontend)
 param staticWebAppName = 'safebank-swa-uat'
 param staticWebAppLocation = 'westeurope'
+param feRepositoryUrl = 'https://github.com/ie-safebank/safebank-fe'
+param staticWebAppTokenName = 'swa-token'
 
+// Container Instance (backend)
+param containerName = 'safebank-container-be-uat'
+param dockerRegistryImageName = 'safebank-be'
+param dockerRegistryImageVersion = 'latest'
+param containerAppSettings = [
+  { name: 'ENV', value: 'uat' }
+  { name: 'DBHOST', value: 'safebank-dbsrv-uat.postgres.database.azure.com' }
+  { name: 'DBNAME', value: 'safebank-db-uat' }
+  { name: 'DBPASS', value: 'IE.Bank.DB.Admin.Pa$$' }
+  { name: 'DBUSER', value: 'iebankdbadmin' }
+  { name: 'FLASK_DEBUG', value: '1' }
+  { name: 'SCM_DO_BUILD_DURING_DEPLOYMENT', value:'true' }
+]
+
+
+// Container Registry
 param registryName = 'safebankcruat'
+param registryLocation = 'westeurope'
+param containerRegistryUsernameSecretName = 'acr-username'
+param containerRegistryPassword0SecretName = 'acr-password0'
+param containerRegistryPassword1SecretName = 'acr-password1'
+
+
+// Key Vault
+param keyVaultName = 'safebank-kv-uat'
+param keyVaultRoleAssignments= [
+  {
+    principalId: '25d8d697-c4a2-479f-96e0-15593a830ae5' // BCSAI2024-DEVOPS-STUDENTS-A-SP
+    roleDefinitionIdOrName: 'Key Vault Secrets User'
+    principalType: 'ServicePrincipal'
+  }
+]
+
+
+// Log Analytics Workspace
+param logAnalyticsWorkspaceName = 'safebank-law-uat'
+
+
+// Application Insights
+param appInsightsName = 'safebank-ai-uat'
+
+
+// App Service Plan
+param appServicePlanName = 'safebank-asp-uat'
