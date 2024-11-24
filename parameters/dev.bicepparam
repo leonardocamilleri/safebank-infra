@@ -23,7 +23,8 @@ param containerAppSettings = [
   { name: 'ENV', value: 'dev' }
   { name: 'DBHOST', value: 'safebank-dbsrv-dev.postgres.database.azure.com' }
   { name: 'DBNAME', value: 'safebank-db-dev' }
-  { name: 'DBUSER', value: 'safebank-be-dev' }
+  { name: 'DBPASS', value: 'IE.Bank.DB.Admin.Pa$$' }
+  { name: 'DBUSER', value: 'iebankdbadmin' }
   { name: 'FLASK_DEBUG', value: '1' }
   { name: 'SCM_DO_BUILD_DURING_DEPLOYMENT', value:'true' }
 ]
