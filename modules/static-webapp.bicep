@@ -44,5 +44,5 @@ resource secretStaticWebAppToken 'Microsoft.KeyVault/vaults/secrets@2023-02-01' 
   }
 }
 
-
+output staticWebAppUrl string = staticWebApp.properties.defaultHostname
 

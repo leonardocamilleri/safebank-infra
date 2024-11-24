@@ -8,6 +8,12 @@
         "postgreSQLServerName": {
             "value": "safebank-dbsrv-dev"
         },
+        "postgreSQLAdminLogin": {
+            "value": "iebankdbadmin"
+        },
+        "postgreSQLAdminPassword": {
+            "value": "IE.Bank.DB.Admin.Pa$$"
+        },
         "postgreSQLDatabaseName": {
             "value": "safebank-db-dev"
         },

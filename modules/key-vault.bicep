@@ -22,6 +22,12 @@ param sku string = 'standard'
 @description('Role assignments for the Key Vault')
 param roleAssignments array = []
 
+@description('The name of the diagnostic setting')
+param diagnosticSettingName string = 'DiagnosticSettingsName'
+
+@description('ID of the Log Analytics Workspace')
+param logAnalyticsWorkspaceId string
+
 var builtInRoleNames = {
   Contributor: subscriptionResourceId(
     'Microsoft.Authorization/roleDefinitions',
@@ -114,6 +120,25 @@ resource keyVault_roleAssignments 'Microsoft.Authorization/roleAssignments@2022-
 }
 ]
 
+resource keyVaultDiagnosticSettings 'Microsoft.Insights/diagnosticSettings@2020-05-01-preview' = {
+  name: diagnosticSettingName
+  scope: keyVault
+  properties: {
+    workspaceId: logAnalyticsWorkspaceId
+    logs: [
+      {
+        category: 'AuditEvent'
+        enabled: true
+      }
+    ]
+    metrics: [
+      {
+        category: 'AllMetrics'
+        enabled: true
+      }
+    ]
+  }
+}
+
 output keyVaultId string = keyVault.id
-
-
+output keyVaultUri string = keyVault.properties.vaultUri

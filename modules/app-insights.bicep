@@ -22,5 +22,10 @@ resource appInsights 'microsoft.insights/components@2020-02-02-preview' = {
     Application_Type: type
     Flow_Type: 'Redfield'
     WorkspaceResourceId: workspaceResourceId
+    IngestionMode: 'LogAnalytics'
   }
 }
+
+output appInsightsId string = appInsights.id
+output appInsightsInstrumentationKey string = appInsights.properties.InstrumentationKey
+output appInsightsConnectionString string = appInsights.properties.ConnectionString

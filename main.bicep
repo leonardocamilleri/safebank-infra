@@ -5,7 +5,7 @@
 ])
 param environmentType string = 'nonprod'
 @sys.description('The user alias to add to the deployment name')
-param userAlias string = 'rorosaga'
+param userAlias string = 'safebank'
 @sys.description('The Azure location where the resources will be deployed')
 param location string = 'northeurope'
 
@@ -27,18 +27,19 @@ module appServicePlan 'modules/app-service-plan.bicep' = {
 @sys.description('The name of the PostgreSQL Server')
 param postgreSQLServerName string
 param postgreSQLAdminLogin string
-@secure()
-param postgreSQLAdminPassword string
-
 
 module postgreSQLServer 'modules/postgre-sql-server.bicep' = {
   name: 'postgreSQLServer-${userAlias}'
   params: {
     name: postgreSQLServerName
     location: location
-    adminLogin: postgreSQLAdminLogin
-    adminPassword: postgreSQLAdminPassword
+    WorkspaceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId
+    adminLoginName: postgreSQLAdminLogin
+    adminPrincipalId: staticWebAppName
   }
+  dependsOn: [
+    staticWebApp
+  ]
 }
 
 
@@ -47,7 +48,7 @@ module postgreSQLServer 'modules/postgre-sql-server.bicep' = {
 param postgreSQLDatabaseName string
 
 module postgreSQLDatabase 'modules/postgre-sql-db.bicep' = {
-  name: 'postgreSQLDB-${userAlias}'
+  name: postgreSQLDatabaseName
   params: {
     serverName: postgreSQLServerName
     name: postgreSQLDatabaseName
@@ -68,7 +69,11 @@ module keyVault 'modules/key-vault.bicep' = {
   params: {
     name: keyVaultName
     location: location
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId
+    enableRbacAuthorization: true
+    enableVaultForTemplateDeployment: true
     enableVaultForDeployment: true 
+    enableSoftDelete: false
     roleAssignments: keyVaultRoleAssignments
   }
 }
@@ -112,7 +117,7 @@ module containerRegistry 'modules/container-registry.bicep' = {
     usernameSecretName: containerRegistryUsernameSecretName
     password0SecretName: containerRegistryPassword0SecretName
     password1SecretName: containerRegistryPassword1SecretName
-    
+    workspaceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId
   }
 }
 
@@ -180,3 +185,4 @@ module appInsights 'modules/app-insights.bicep' = {
     workspaceResourceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId // Link to the Log Analytics Workspace
   }
 }
+
