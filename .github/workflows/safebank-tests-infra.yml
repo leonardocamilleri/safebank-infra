@@ -1,0 +1,117 @@
+name: safebank-infra-tests
+
+
+on:
+  workflow_dispatch:
+  # Runs on pull requests to the main branch to validate changes.
+  pull_request:
+    branches:
+      - main
+  # Runs on pushes to the main branch to ensure continuous testing.
+  push:
+    branches:
+      - main
+
+# Set environment variables used during the tests.
+env:
+  RESOURCE_GROUP_DEV: BCSAI2024-DEVOPS-STUDENTS-A-DEV
+  RESOURCE_GROUP_UAT: BCSAI2024-DEVOPS-STUDENTS-A-UAT
+  RESOURCE_GROUP_PROD: BCSAI2024-DEVOPS-STUDENTS-A-PROD
+  SUBSCRIPTION_ID_DEV: e0b9cada-61bc-4b5a-bd7a-52c606726b3b
+  SUBSCRIPTION_ID_UAT: e0b9cada-61bc-4b5a-bd7a-52c606726b3b
+  SUBSCRIPTION_ID_PROD: e0b9cada-61bc-4b5a-bd7a-52c606726b3b
+  USER_ALIAS: rorosaga
+
+permissions:
+  # Required for Azure authentication and uploading security results.
+  id-token: write
+  contents: read
+  security-events: write
+
+jobs:
+  # Bicep Unit Tests
+  bicep-unit-tests:
+    name: 'Bicep Unit Tests'
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository to the runner.
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Authenticate to Azure using OpenID Connect (OIDC).
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # Lint the Bicep files to ensure correct formatting.
+      - name: Bicep Lint
+        uses: Azure/cli@v1
+        with:
+          inlineScript: az bicep build --file main.bicep
+
+      # Validate the Bicep templates to ensure they can be deployed.
+      - name: Bicep Validate
+        uses: Azure/cli@v1
+        with:
+          inlineScript: |
+            az deployment sub validate \
+              --name validate-${{ github.run_id }} \
+              --template-file main.bicep \
+              --location $LOCATION
+
+      # Perform a security scan of the Bicep code using Checkov.
+      - name: Run Checkov Security Scan
+        id: checkov
+        uses: bridgecrewio/checkov-action@master
+        with: 
+          framework: bicep
+
+      # Upload the security scan results as a SARIF file for review.
+      - name: Upload SARIF Results
+        if: success() || failure()
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: results.sarif
+          category: checkov
+
+  # Scorecard Supply Chain Security Analysis
+  scorecard-security:
+    name: Scorecard Supply Chain Security
+    runs-on: ubuntu-latest
+    permissions:
+      # Needed for uploading results to GitHub Code Scanning and publishing results.
+      security-events: write
+      id-token: write
+
+    steps:
+      # Checkout the repository to the runner.
+      - name: "Checkout Code"
+        uses: actions/checkout@v4.1.1
+        with:
+          persist-credentials: false
+
+      # Run the OpenSSF Scorecard analysis to check supply chain security.
+      - name: "Run Scorecard Analysis"
+        uses: ossf/scorecard-action@v2.3.1
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          publish_results: true
+
+      # Upload the SARIF file as an artifact for easy download and review.
+      - name: "Upload SARIF File as Artifact"
+        uses: actions/upload-artifact@v3
+        with:
+          name: SARIF File
+          path: results.sarif
+          retention-days: 7
+
+      # Upload results to GitHub's Code Scanning dashboard for visibility.
+      - name: "Upload Results to Code Scanning"
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
