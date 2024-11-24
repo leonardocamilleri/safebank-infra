@@ -15,7 +15,7 @@ on:
     branches: [ "main" ]
 
 # Declare default permissions as read only.
-permissions: read-all 
+permissions: read-all
 
 jobs:
   analysis:
@@ -71,76 +71,3 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: results.sarif
-
-  # Bicep Unit Tests
-  bicep-unit-tests:
-    name: 'Bicep Unit Tests'
-    runs-on: ubuntu-latest
-
-    steps:
-      # Checkout the repository to the runner.
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      # Lint the Bicep files to ensure correct formatting.
-      - name: Bicep Lint
-        uses: Azure/cli@v1
-        with:
-          inlineScript: az bicep build --file main.bicep
-
-      # Validate the Bicep templates to ensure they can be deployed.
-      - name: Bicep Validate
-        uses: Azure/cli@v1
-        with:
-          inlineScript: |
-            az deployment sub validate \
-              --name validate-${{ github.run_id }} \
-              --template-file main.bicep \
-              --location $LOCATION
-
-      # Perform a security scan of the Bicep code using Checkov.
-      - name: Run Checkov Security Scan
-        id: checkov
-        uses: bridgecrewio/checkov-action@master
-        with: 
-          framework: bicep
-
-  # Scorecard Scheduled Security Analysis
-  scorecard-scheduled:
-    name: Scorecard Scheduled Security Analysis
-    runs-on: ubuntu-latest
-    permissions:
-      # Permissions for uploading results to GitHub Code Scanning and enabling Branch-Protection checks.
-      security-events: write
-      id-token: write
-
-    # Scheduled trigger: Runs periodically based on the cron schedule.
-    steps:
-      # Step 1: Checkout the repository to the runner.
-      - name: "Checkout code"
-        uses: actions/checkout@v4.1.1
-        with:
-          persist-credentials: false
-
-      # Step 2: Run the OpenSSF Scorecard analysis to ensure repository security and maintenance status.
-      - name: "Run analysis"
-        uses: ossf/scorecard-action@v2.3.1
-        with:
-          results_file: results.sarif
-          results_format: sarif
-          publish_results: true  # Publishes results for public repositories.
-
-      # Step 3: Upload the SARIF results for analysis as an artifact.
-      - name: "Upload artifact"
-        uses: actions/upload-artifact@v3
-        with:
-          name: SARIF file
-          path: results.sarif
-          retention-days: 5
-
-      # Step 4: Upload results to GitHub's Code Scanning dashboard.
-      - name: "Upload to code-scanning"
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: results.sarif
-
