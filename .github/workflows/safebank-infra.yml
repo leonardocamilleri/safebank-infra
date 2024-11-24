@@ -37,6 +37,17 @@ jobs:
       with:
         name: bicep-build
         path: ./main.bicep 
+    
+      # Checkout the repository to the runner.
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Perform a security scan of the Bicep code using Checkov.
+    - name: Run Checkov Security Scan
+      id: checkov
+      uses: bridgecrewio/checkov-action@master
+      with: 
+        framework: bicep
 
   deploy-dev:
     # if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
