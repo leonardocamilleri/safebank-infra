@@ -73,10 +73,6 @@ module keyVault 'modules/key-vault.bicep' = {
   }
 }
 
-resource keyVaultReference 'Microsoft.KeyVault/vaults@2022-07-01'existing = {
-  name: keyVaultName
-}
-
 // Static Web App
 @sys.description('The name of the Static Web App')
 param staticWebAppName string
@@ -127,21 +123,25 @@ param dockerRegistryImageName string
 param dockerRegistryImageVersion string
 param containerAppSettings array
 
-module containerAppService 'modules/container-appservice.bicep' = {
-  name: 'containerAppService-${userAlias}'
-  params: {
-    location: location
-    name: containerName
-    appServicePlanId: appServicePlan.outputs.id
-    registryName: registryName
-    registryServerUserName: keyVaultReference.getSecret(containerRegistryUsernameSecretName)
-    registryServerPassword: keyVaultReference.getSecret(containerRegistryPassword0SecretName)
-    registryImageName: dockerRegistryImageName
-    registryImageVersion: dockerRegistryImageVersion
-    appSettings: containerAppSettings
-    appCommandLine: ''
-  }
+resource keyVaultReference 'Microsoft.KeyVault/vaults@2022-07-01'existing = {
+  name: keyVaultName
 }
+
+  module containerAppService 'modules/container-appservice.bicep' = {
+    name: 'containerAppService-${userAlias}'
+    params: {
+      location: location
+      name: containerName
+      appServicePlanId: appServicePlan.outputs.id
+      registryName: registryName
+      registryServerUserName: keyVaultReference.getSecret(containerRegistryUsernameSecretName)
+      registryServerPassword: keyVaultReference.getSecret(containerRegistryPassword0SecretName)
+      registryImageName: dockerRegistryImageName
+      registryImageVersion: dockerRegistryImageVersion
+      appSettings: containerAppSettings
+      appCommandLine: ''
+    }
+  }
 
 
 // Log Analytics Workspace
