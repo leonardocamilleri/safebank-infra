@@ -6,10 +6,10 @@ on:
     branches:
       - main
   push:
-    branches:
-      - '*'
-    paths-ignore:
-      - 'scripts/**'
+      branches:
+        - '*'
+      paths-ignore:
+        - 'scripts/**'
 
 env:
   RESOURCE_GROUP_DEV: BCSAI2024-DEVOPS-STUDENTS-A-DEV
