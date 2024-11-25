@@ -1,5 +1,5 @@
 param serverName string
-param name string = 'ie-bank-db'
+param name string = 'safebank-db'
 
 resource postgreSQLServer 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' existing = {
   name: serverName
