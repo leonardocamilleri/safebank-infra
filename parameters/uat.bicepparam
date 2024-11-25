@@ -2,8 +2,8 @@ using '../main.bicep'
 
 // SQL Server
 param postgreSQLServerName = 'safebank-dbsrv-uat'
-param postgreSQLAdminLogin = 'iebankdbadmin'
-param postgreSQLAdminPassword = 'IE.Bank.DB.Admin.Pa$$'
+// param postgreSQLAdminLogin = 'iebankdbadmin'
+// param postgreSQLAdminPassword = 'IE.Bank.DB.Admin.Pa$$'
 
 
 // SQL DB
@@ -21,13 +21,14 @@ param dockerRegistryImageName = 'safebank-be'
 param dockerRegistryImageVersion = 'latest'
 param containerAppSettings = [
   { name: 'ENV', value: 'uat' }
-  { name: 'DBHOST', value: 'safebank-dbsrv-uat.postgres.database.azure.com' }
+  { name: 'DBHOST', value: 'safebank-dbsrv-uat.postgres.database.azure.com?sslmode=require' } // Enforce SSL
   { name: 'DBNAME', value: 'safebank-db-uat' }
   { name: 'DBPASS', value: 'IE.Bank.DB.Admin.Pa$$' }
   { name: 'DBUSER', value: 'iebankdbadmin' }
   { name: 'FLASK_DEBUG', value: '1' }
   { name: 'SCM_DO_BUILD_DURING_DEPLOYMENT', value:'true' }
 ]
+
 
 
 // Container Registry

@@ -2,8 +2,8 @@ using '../main.bicep'
 
 // SQL Server
 param postgreSQLServerName = 'safebank-dbsrv-dev'
-param postgreSQLAdminLogin = 'iebankdbadmin'
-param postgreSQLAdminPassword = 'IE.Bank.DB.Admin.Pa$$'
+// param postgreSQLAdminLogin = 'iebankdbadmin'
+// param postgreSQLAdminPassword = 'IE.Bank.DB.Admin.Pa$$'
 
 
 // SQL DB

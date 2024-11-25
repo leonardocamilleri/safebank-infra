@@ -4,6 +4,7 @@ param sku string = 'Basic'
 param adminUserEnabled bool = true
 param containerRegistryDiagnostics string = 'DiagnosticSettings'
 param workspaceId string
+#disable-next-line secure-secrets-in-params
 
 param keyVaultResourceId string
 param usernameSecretName string

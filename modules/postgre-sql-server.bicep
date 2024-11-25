@@ -33,14 +33,12 @@ resource postgreSQLServer 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01'
 }
 
 resource postgreSQLServerFirewallRules 'Microsoft.DBforPostgreSQL/flexibleServers/firewallRules@2022-12-01' = {
-    name: '${postgreSQLServer.name}/AllowAllAzureServicesAndResourcesWithinAzureIps'
+    parent: postgreSQLServer
+    name: 'AllowAllAzureServicesAndResourcesWithinAzureIps'
     properties: {
       endIpAddress: '0.0.0.0'
       startIpAddress: '0.0.0.0'
     }
-    dependsOn: [
-      postgreSQLServer
-    ]
 }
 
 resource postgreSQLAdmin 'Microsoft.DBforPostgreSQL/flexibleServers/administrators@2022-12-01' = {

@@ -9,146 +9,6 @@ param userAlias string = 'safebank'
 @sys.description('The Azure location where the resources will be deployed')
 param location string = 'northeurope'
 
-// App Service Plan
-@sys.description('The name of the App Service Plan')
-param appServicePlanName string
-
-module appServicePlan 'modules/app-service-plan.bicep' = {
-  name: 'appServicePlan-${userAlias}'
-  params: {
-    location: location
-    name: appServicePlanName
-    sku: 'B1'
-  }
-}
-
-
-// PostgreSQL Server
-@sys.description('The name of the PostgreSQL Server')
-param postgreSQLServerName string
-param postgreSQLAdminLogin string
-
-module postgreSQLServer 'modules/postgre-sql-server.bicep' = {
-  name: 'postgreSQLServer-${userAlias}'
-  params: {
-    name: postgreSQLServerName
-    location: location
-    WorkspaceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId
-    adminLoginName: postgreSQLAdminLogin
-    adminPrincipalId: staticWebAppName
-  }
-  dependsOn: [
-    staticWebApp
-  ]
-}
-
-
-// PostgreSQL Database
-@sys.description('The name of the PostgreSQL Database')
-param postgreSQLDatabaseName string
-
-module postgreSQLDatabase 'modules/postgre-sql-db.bicep' = {
-  name: postgreSQLDatabaseName
-  params: {
-    serverName: postgreSQLServerName
-    name: postgreSQLDatabaseName
-  }
-  dependsOn: [
-    postgreSQLServer
-  ]
-}
-
-// Key Vault
-@sys.description('The name of the Key Vault')
-param keyVaultName string
-@sys.description('Role assignments for the Key Vault')
-param keyVaultRoleAssignments array = []
-
-module keyVault 'modules/key-vault.bicep' = {
-  name: 'keyVault-${userAlias}'
-  params: {
-    name: keyVaultName
-    location: location
-    logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId
-    enableRbacAuthorization: true
-    enableVaultForTemplateDeployment: true
-    enableVaultForDeployment: true 
-    enableSoftDelete: false
-    roleAssignments: keyVaultRoleAssignments
-  }
-}
-
-// Static Web App
-@sys.description('The name of the Static Web App')
-param staticWebAppName string
-@sys.description('The location of the Static Web App')
-param staticWebAppLocation string
-@sys.description('The URL of the repo with the Web App')
-param feRepositoryUrl string
-param staticWebAppTokenName string
-
-module staticWebApp 'modules/static-webapp.bicep' = {
-  name: 'staticWebApp-${userAlias}'
-  params: {
-    name: staticWebAppName
-    location: staticWebAppLocation
-    url: feRepositoryUrl
-    keyVaultResourceId: keyVault.outputs.keyVaultId
-    tokenName: staticWebAppTokenName
-  }
-}
-
-
-// Container Registry
-@description('The name of the container registry')
-param registryName string
-@description('The location of the container registry')
-param registryLocation string
-param containerRegistryUsernameSecretName string 
-param containerRegistryPassword0SecretName string 
-param containerRegistryPassword1SecretName string 
-
-module containerRegistry 'modules/container-registry.bicep' = {
-  name: 'containerRegistry-${userAlias}'
-  params: {
-    name: registryName
-    location: registryLocation
-    keyVaultResourceId: keyVault.outputs.keyVaultId
-    usernameSecretName: containerRegistryUsernameSecretName
-    password0SecretName: containerRegistryPassword0SecretName
-    password1SecretName: containerRegistryPassword1SecretName
-    workspaceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId
-  }
-}
-
-
-// Container App Service
-param containerName string
-param dockerRegistryImageName string
-param dockerRegistryImageVersion string
-param containerAppSettings array
-
-resource keyVaultReference 'Microsoft.KeyVault/vaults@2022-07-01'existing = {
-  name: keyVaultName
-}
-
-  module containerAppService 'modules/container-appservice.bicep' = {
-    name: 'containerAppService-${userAlias}'
-    params: {
-      location: location
-      name: containerName
-      appServicePlanId: appServicePlan.outputs.id
-      registryName: registryName
-      registryServerUserName: keyVaultReference.getSecret(containerRegistryUsernameSecretName)
-      registryServerPassword: keyVaultReference.getSecret(containerRegistryPassword0SecretName)
-      registryImageName: dockerRegistryImageName
-      registryImageVersion: dockerRegistryImageVersion
-      appSettings: containerAppSettings
-      appCommandLine: ''
-    }
-  }
-
-
 // Log Analytics Workspace
 @sys.description('The name of the Log Analytics Workspace')
 param logAnalyticsWorkspaceName string
@@ -186,3 +46,153 @@ module appInsights 'modules/app-insights.bicep' = {
   }
 }
 
+
+// Key Vault
+@sys.description('The name of the Key Vault')
+param keyVaultName string
+@sys.description('Role assignments for the Key Vault')
+param keyVaultRoleAssignments array = []
+
+module keyVault 'modules/key-vault.bicep' = {
+  name: 'keyVault-${userAlias}'
+  params: {
+    name: keyVaultName
+    location: location
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId
+    enableRbacAuthorization: true
+    enableVaultForTemplateDeployment: true
+    enableVaultForDeployment: true 
+    enableSoftDelete: false
+    roleAssignments: keyVaultRoleAssignments
+  }
+}
+
+// Container Registry
+@description('The name of the container registry')
+param registryName string
+@description('The location of the container registry')
+param registryLocation string
+param containerRegistryUsernameSecretName string 
+param containerRegistryPassword0SecretName string 
+param containerRegistryPassword1SecretName string 
+
+module containerRegistry 'modules/container-registry.bicep' = {
+  name: 'containerRegistry-${userAlias}'
+  params: {
+    name: registryName
+    location: registryLocation
+    keyVaultResourceId: keyVault.outputs.keyVaultId
+    usernameSecretName: containerRegistryUsernameSecretName
+    password0SecretName: containerRegistryPassword0SecretName
+    password1SecretName: containerRegistryPassword1SecretName
+    workspaceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId
+  }
+}
+
+
+// App Service Plan
+@sys.description('The name of the App Service Plan')
+param appServicePlanName string
+
+module appServicePlan 'modules/app-service-plan.bicep' = {
+  name: 'appServicePlan-${userAlias}'
+  params: {
+    location: location
+    name: appServicePlanName
+    sku: 'B1'
+  }
+}
+
+// Container App Service
+param containerName string
+param dockerRegistryImageName string
+param dockerRegistryImageVersion string
+param containerAppSettings array
+@secure()
+param adminUsername string = '' // Default to empty string which will be filled with the values in the key vault
+@secure()
+param adminPassword string = ''
+
+resource keyVaultReference 'Microsoft.KeyVault/vaults@2022-07-01'existing = {
+  name: keyVaultName
+}
+
+  module containerAppService 'modules/container-appservice.bicep' = {
+    name: 'containerAppService-${userAlias}'
+    params: {
+      workspaceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId
+      location: location
+      name: containerName
+      appServicePlanId: appServicePlan.outputs.id
+      registryName: registryName
+      registryServerUserName: keyVaultReference.getSecret(containerRegistryUsernameSecretName)
+      registryServerPassword: keyVaultReference.getSecret(containerRegistryPassword0SecretName)
+      registryImageName: dockerRegistryImageName
+      registryImageVersion: dockerRegistryImageVersion
+      connectionStrings: appInsights.outputs.appInsightsConnectionString
+      instrumentationKey: appInsights.outputs.appInsightsInstrumentationKey
+      adminUsername: adminUsername
+      adminPassword: adminPassword
+      appSettings: containerAppSettings
+      appCommandLine: ''
+    }
+    dependsOn: [
+      appServicePlan
+      containerRegistry
+      keyVault
+    ]
+  }
+
+// PostgreSQL Server
+@sys.description('The name of the PostgreSQL Server')
+param postgreSQLServerName string
+
+module postgreSQLServer 'modules/postgre-sql-server.bicep' = {
+  name: 'postgreSQLServer-${userAlias}'
+  params: {
+    name: postgreSQLServerName
+    location: location
+    WorkspaceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId
+    adminLoginName: containerAppService.outputs.containerAppServiceName
+    adminPrincipalId: containerAppService.outputs.containerAppServiceId
+  }
+  dependsOn: [
+    containerAppService
+  ]
+}
+
+
+// PostgreSQL Database
+@sys.description('The name of the PostgreSQL Database')
+param postgreSQLDatabaseName string
+
+module postgreSQLDatabase 'modules/postgre-sql-db.bicep' = {
+  name: postgreSQLDatabaseName
+  params: {
+    serverName: postgreSQLServerName
+    name: postgreSQLDatabaseName
+  }
+  dependsOn: [
+    postgreSQLServer
+  ]
+}
+
+// Static Web App
+@sys.description('The name of the Static Web App')
+param staticWebAppName string
+@sys.description('The location of the Static Web App')
+param staticWebAppLocation string
+@sys.description('The URL of the repo with the Web App')
+param feRepositoryUrl string
+param staticWebAppTokenName string
+
+module staticWebApp 'modules/static-webapp.bicep' = {
+  name: 'staticWebApp-${userAlias}'
+  params: {
+    name: staticWebAppName
+    location: staticWebAppLocation
+    url: feRepositoryUrl
+    keyVaultResourceId: keyVault.outputs.keyVaultId
+    tokenName: staticWebAppTokenName
+  }
+}
