@@ -71,10 +71,6 @@ resource appServiceSettingsConfiguration 'Microsoft.Insights/diagnosticSettings@
         enabled: true
       }
       {
-        category: 'AppServiceFileAuditLogs'
-        enabled: true
-      }
-      {
         category: 'AppServicePlatformLogs'
         enabled: true
       }
