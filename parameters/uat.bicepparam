@@ -2,9 +2,6 @@ using '../main.bicep'
 
 // SQL Server
 param postgreSQLServerName = 'safebank-dbsrv-uat'
-// param postgreSQLAdminLogin = 'iebankdbadmin'
-// param postgreSQLAdminPassword = 'IE.Bank.DB.Admin.Pa$$'
-
 
 // SQL DB
 param postgreSQLDatabaseName = 'safebank-db-uat'
@@ -16,20 +13,17 @@ param feRepositoryUrl = 'https://github.com/ie-safebank/safebank-fe'
 param staticWebAppTokenName = 'swa-token'
 
 // Container Instance (backend)
-param containerName = 'safebank-container-be-uat'
+param containerName = 'safebank-be-uat'
 param dockerRegistryImageName = 'safebank-be'
 param dockerRegistryImageVersion = 'latest'
 param containerAppSettings = [
   { name: 'ENV', value: 'uat' }
-  { name: 'DBHOST', value: 'safebank-dbsrv-uat.postgres.database.azure.com?sslmode=require' } // Enforce SSL
+  { name: 'DBHOST', value: 'safebank-dbsrv-uat.postgres.database.azure.com' }
   { name: 'DBNAME', value: 'safebank-db-uat' }
-  { name: 'DBPASS', value: 'IE.Bank.DB.Admin.Pa$$' }
-  { name: 'DBUSER', value: 'iebankdbadmin' }
+  { name: 'DBUSER', value: 'safebank-be-uat' }
   { name: 'FLASK_DEBUG', value: '1' }
   { name: 'SCM_DO_BUILD_DURING_DEPLOYMENT', value:'true' }
 ]
-
-
 
 // Container Registry
 param registryName = 'safebankcruat'
@@ -37,7 +31,6 @@ param registryLocation = 'westeurope'
 param containerRegistryUsernameSecretName = 'acr-username'
 param containerRegistryPassword0SecretName = 'acr-password0'
 param containerRegistryPassword1SecretName = 'acr-password1'
-
 
 // Key Vault
 param keyVaultName = 'safebank-kv-uat'
@@ -49,14 +42,11 @@ param keyVaultRoleAssignments= [
   }
 ]
 
-
 // Log Analytics Workspace
 param logAnalyticsWorkspaceName = 'safebank-law-uat'
 
-
 // Application Insights
 param appInsightsName = 'safebank-ai-uat'
-
 
 // App Service Plan
 param appServicePlanName = 'safebank-asp-uat'
