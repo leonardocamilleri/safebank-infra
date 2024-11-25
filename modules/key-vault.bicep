@@ -11,7 +11,7 @@ param enableVaultForDeployment bool = true
 param enableRbacAuthorization bool = true
 
 @description('Enable soft delete for the Key Vault')
-param enableSoftDelete bool = false
+param enableSoftDelete bool = true
 
 @description('Enable Key Vault for template deployment operations')
 param enableVaultForTemplateDeployment bool = true

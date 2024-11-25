@@ -62,7 +62,7 @@ module keyVault 'modules/key-vault.bicep' = {
     enableRbacAuthorization: true
     enableVaultForTemplateDeployment: true
     enableVaultForDeployment: true 
-    enableSoftDelete: false
+    enableSoftDelete: true
     roleAssignments: keyVaultRoleAssignments
   }
 }
