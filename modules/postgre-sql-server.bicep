@@ -1,7 +1,8 @@
 param name string
 param location string = resourceGroup().location
-param adminLoginName string
-param adminPrincipalId string
+param postgresSQLAdminServicePrincipalObjectId string
+param postgresSQLAdminServicePrincipalName string
+
 param WorkspaceId string
 // @secure()
 // param adminPassword string
@@ -29,24 +30,25 @@ resource postgreSQLServer 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01'
       geoRedundantBackup: 'Disabled'
     }
     version: '15'
+    authConfig: {activeDirectoryAuth: 'Enabled', passwordAuth: 'Enabled', tenantId: subscription().tenantId }
   }
 }
 
 resource postgreSQLServerFirewallRules 'Microsoft.DBforPostgreSQL/flexibleServers/firewallRules@2022-12-01' = {
-    parent: postgreSQLServer
     name: 'AllowAllAzureServicesAndResourcesWithinAzureIps'
+    parent: postgreSQLServer
     properties: {
       endIpAddress: '0.0.0.0'
       startIpAddress: '0.0.0.0'
     }
 }
 
-resource postgreSQLAdmin 'Microsoft.DBforPostgreSQL/flexibleServers/administrators@2022-12-01' = {
+resource postgreSQLAdministrators 'Microsoft.DBforPostgreSQL/flexibleServers/administrators@2022-12-01' = {
   parent: postgreSQLServer
-  name: adminPrincipalId
+  name: postgresSQLAdminServicePrincipalObjectId
   properties: {
-    principalName: adminLoginName
-    principalType: 'admin'
+    principalName: postgresSQLAdminServicePrincipalName
+    principalType: 'ServicePrincipal'
     tenantId: subscription().tenantId
   }
   dependsOn: [
@@ -54,6 +56,7 @@ resource postgreSQLAdmin 'Microsoft.DBforPostgreSQL/flexibleServers/administrato
   ]
 }
 
+output id string = postgreSQLServer.id
 
 resource postgreSQLDiagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   name: 'postgreSQLDiagnosticSettings'
@@ -78,6 +81,5 @@ resource postgreSQLDiagnosticSettings 'Microsoft.Insights/diagnosticSettings@202
 }
 
 output postgreSQLServerName string = postgreSQLServer.name
-output postgreSQLId string = postgreSQLServer.id
 
 

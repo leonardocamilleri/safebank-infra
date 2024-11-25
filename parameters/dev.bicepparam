@@ -2,9 +2,6 @@ using '../main.bicep'
 
 // SQL Server
 param postgreSQLServerName = 'safebank-dbsrv-dev'
-// param postgreSQLAdminLogin = 'iebankdbadmin'
-// param postgreSQLAdminPassword = 'IE.Bank.DB.Admin.Pa$$'
-
 
 // SQL DB
 param postgreSQLDatabaseName = 'safebank-db-dev'
@@ -16,15 +13,14 @@ param feRepositoryUrl = 'https://github.com/ie-safebank/safebank-fe'
 param staticWebAppTokenName = 'swa-token'
 
 // Container Instance (backend)
-param containerName = 'safebank-container-be-dev'
+param containerName = 'safebank-be-dev'
 param dockerRegistryImageName = 'safebank-be'
 param dockerRegistryImageVersion = 'latest'
 param containerAppSettings = [
   { name: 'ENV', value: 'dev' }
-  { name: 'DBHOST', value: 'safebank-dbsrv-dev.postgres.database.azure.com?sslmode=require' } // Enforce SSL
+  { name: 'DBHOST', value: 'safebank-dbsrv-dev.postgres.database.azure.com' }
   { name: 'DBNAME', value: 'safebank-db-dev' }
-  { name: 'DBPASS', value: 'IE.Bank.DB.Admin.Pa$$' }
-  { name: 'DBUSER', value: 'iebankdbadmin' }
+  { name: 'DBUSER', value: 'safebank-be-dev' }
   { name: 'FLASK_DEBUG', value: '1' }
   { name: 'SCM_DO_BUILD_DURING_DEPLOYMENT', value:'true' }
 ]

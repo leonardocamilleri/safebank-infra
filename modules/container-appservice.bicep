@@ -53,6 +53,7 @@ resource containerAppService 'Microsoft.Web/sites@2022-03-01' = {
   }
 }
 output containerAppServiceHostName string = containerAppService.properties.defaultHostName
+output systemAssignedIdentityPrincipalId string = containerAppService.identity.principalId
 
 // Settings for the App Service
 resource appServiceSettingsConfiguration 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {

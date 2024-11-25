@@ -113,35 +113,35 @@ param adminUsername string = '' // Default to empty string which will be filled 
 @secure()
 param adminPassword string = ''
 
-resource keyVaultReference 'Microsoft.KeyVault/vaults@2022-07-01'existing = {
+resource keyVaultReference 'Microsoft.KeyVault/vaults@2023-07-01'existing = {
   name: keyVaultName
 }
 
-  module containerAppService 'modules/container-appservice.bicep' = {
-    name: 'containerAppService-${userAlias}'
-    params: {
-      workspaceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId
-      location: location
-      name: containerName
-      appServicePlanId: appServicePlan.outputs.id
-      registryName: registryName
-      registryServerUserName: keyVaultReference.getSecret(containerRegistryUsernameSecretName)
-      registryServerPassword: keyVaultReference.getSecret(containerRegistryPassword0SecretName)
-      registryImageName: dockerRegistryImageName
-      registryImageVersion: dockerRegistryImageVersion
-      connectionStrings: appInsights.outputs.appInsightsConnectionString
-      instrumentationKey: appInsights.outputs.appInsightsInstrumentationKey
-      adminUsername: adminUsername
-      adminPassword: adminPassword
-      appSettings: containerAppSettings
-      appCommandLine: ''
-    }
-    dependsOn: [
-      appServicePlan
-      containerRegistry
-      keyVault
-    ]
+module containerAppService 'modules/container-appservice.bicep' = {
+  name: 'containerAppService-${userAlias}'
+  params: {
+    workspaceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId
+    location: location
+    name: containerName
+    appServicePlanId: appServicePlan.outputs.id
+    registryName: registryName
+    registryServerUserName: keyVaultReference.getSecret(containerRegistryUsernameSecretName)
+    registryServerPassword: keyVaultReference.getSecret(containerRegistryPassword0SecretName)
+    registryImageName: dockerRegistryImageName
+    registryImageVersion: dockerRegistryImageVersion
+    connectionStrings: appInsights.outputs.appInsightsConnectionString
+    instrumentationKey: appInsights.outputs.appInsightsInstrumentationKey
+    adminUsername: adminUsername
+    adminPassword: adminPassword
+    appSettings: containerAppSettings
+    appCommandLine: ''
   }
+  dependsOn: [
+    appServicePlan
+    containerRegistry
+    keyVault
+  ]
+}
 
 // PostgreSQL Server
 @sys.description('The name of the PostgreSQL Server')
@@ -153,8 +153,8 @@ module postgreSQLServer 'modules/postgre-sql-server.bicep' = {
     name: postgreSQLServerName
     location: location
     WorkspaceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId
-    adminLoginName: containerAppService.outputs.containerAppServiceName
-    adminPrincipalId: containerAppService.outputs.containerAppServiceId
+    postgresSQLAdminServicePrincipalObjectId: containerAppService.outputs.systemAssignedIdentityPrincipalId
+    postgresSQLAdminServicePrincipalName: containerName
   }
   dependsOn: [
     containerAppService
