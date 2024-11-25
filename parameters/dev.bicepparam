@@ -25,15 +25,12 @@ param containerAppSettings = [
   { name: 'SCM_DO_BUILD_DURING_DEPLOYMENT', value:'true' }
 ]
 
-
-
 // Container Registry
 param registryName = 'safebankcrdev'
 param registryLocation = 'westeurope'
 param containerRegistryUsernameSecretName = 'acr-username'
 param containerRegistryPassword0SecretName = 'acr-password0'
 param containerRegistryPassword1SecretName = 'acr-password1'
-
 
 // Key Vault
 param keyVaultName = 'safebank-kv-dev'
@@ -45,14 +42,11 @@ param keyVaultRoleAssignments= [
   }
 ]
 
-
 // Log Analytics Workspace
 param logAnalyticsWorkspaceName = 'safebank-law-dev'
 
-
 // Application Insights
 param appInsightsName = 'safebank-ai-dev'
-
 
 // App Service Plan
 param appServicePlanName = 'safebank-asp-dev'
