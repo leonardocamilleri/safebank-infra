@@ -60,6 +60,7 @@ resource secretAdminUserPassword1 'Microsoft.KeyVault/vaults/secrets@2023-02-01'
 // Container diagnostic settings
 resource containerRegistryDiagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   name: containerRegistryDiagnostics
+  scope: containerRegistry
   properties: {
     workspaceId: workspaceId
     metrics: [
