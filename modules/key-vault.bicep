@@ -120,7 +120,7 @@ resource keyVault_roleAssignments 'Microsoft.Authorization/roleAssignments@2022-
 }
 ]
 
-resource keyVaultDiagnosticSettings 'Microsoft.Insights/diagnosticSettings@2020-05-01-preview' = {
+resource keyVaultDiagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   name: diagnosticSettingName
   scope: keyVault
   properties: {

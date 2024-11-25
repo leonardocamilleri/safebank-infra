@@ -55,7 +55,7 @@ resource postgreSQLAdmin 'Microsoft.DBforPostgreSQL/flexibleServers/administrato
 }
 
 
-resource postgreSQLDiagnosticSettings 'Microsoft.Insights/diagnosticSettings@2020-05-01-preview' = {
+resource postgreSQLDiagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
   name: 'postgreSQLDiagnosticSettings'
   scope: postgreSQLServer
   properties: {
