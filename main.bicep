@@ -180,18 +180,18 @@ module postgreSQLDatabase 'modules/postgre-sql-db.bicep' = {
 // Static Web App
 @sys.description('The name of the Static Web App')
 param staticWebAppName string
-@sys.description('The location of the Static Web App')
-param staticWebAppLocation string
-@sys.description('The URL of the repo with the Web App')
-param feRepositoryUrl string
+// @sys.description('The location of the Static Web App')
+// param staticWebAppLocation string
+// @sys.description('The URL of the repo with the Web App')
+// param feRepositoryUrl string
 param staticWebAppTokenName string
 
 module staticWebApp 'modules/static-webapp.bicep' = {
   name: 'staticWebApp-${userAlias}'
   params: {
     name: staticWebAppName
-    location: staticWebAppLocation
-    url: feRepositoryUrl
+    // location: staticWebAppLocation
+    // url: feRepositoryUrl
     keyVaultResourceId: keyVault.outputs.keyVaultId
     tokenName: staticWebAppTokenName
   }
