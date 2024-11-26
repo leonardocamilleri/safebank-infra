@@ -87,6 +87,9 @@ module containerRegistry 'modules/container-registry.bicep' = {
     password1SecretName: containerRegistryPassword1SecretName
     workspaceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId
   }
+  dependsOn: [
+    keyVault
+  ]
 }
 
 
