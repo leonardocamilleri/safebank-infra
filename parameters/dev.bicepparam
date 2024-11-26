@@ -9,7 +9,7 @@ param postgreSQLDatabaseName = 'safebank-db-dev'
 // Satic Website (frontend)
 param staticWebAppName = 'safebank-swa-dev'
 param staticWebAppLocation = 'westeurope'
-param feRepositoryUrl = 'https://github.com/ie-safebank/safebank-fe'
+// param feRepositoryUrl = 'https://github.com/ie-safebank/safebank-fe'
 param staticWebAppTokenName = 'swa-token'
 
 // Container Instance (backend)
