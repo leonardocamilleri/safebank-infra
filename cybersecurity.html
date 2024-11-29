@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Decision - Cybersecurity</title>
+</head>
+<body>
+    <header>
+        <h1>Design Decision</h1>
+        <h2>Cybersecurity Engineer: Massimo Giuseppe Ridella</h2>
+    </header>
+    <main>
+        <section>
+            <h2>The 5 Implemented OpenSSF Frameworks</h2>
+            <p>The OpenSSF framework ‘Concise Guide for Developing More Secure Software’ is a list of 27 guidelines aimed at reducing vulnerabilities attackers could exploit. This section describes the security guidelines implemented in Safe-Bank.</p>
+            <ol>
+                <li>
+                    <h3>Multi Factor Authentication</h3>
+                    <p>MFA adds an additional security layer to Github accounts, reducing risks of unauthorized access. The Cybersecurity engineer activated the “Requirement to have MFA” to ensure organizational security.</p>
+                </li>
+                <li>
+                    <h3>Monitor Dependency Vulnerabilities</h3>
+                    <p>IE-Safebank uses Dependabot in Github to scan for vulnerabilities categorized as low, medium, high, or critical. Medium and low risks were deprioritized due to time constraints.</p>
+                </li>
+                <li>
+                    <h3>Keep Dependencies Reasonably Up-to-Date</h3>
+                    <p>To address human-centric aspects of Dependabot, alerts were connected to a Slack channel to notify developers promptly.</p>
+                </li>
+                <li>
+                    <h3>Do Not Push Secrets to a Repository</h3>
+                    <p>Using Github’s ‘Secret Scanning’ tool, commits are automatically scanned for hard-coded secrets, reducing vulnerabilities.</p>
+                </li>
+                <li>
+                    <h3>Review Code Changes</h3>
+                    <p>IE-Safebank enforces code reviews before merging pull requests. This practice enhances main branch security and fosters knowledge sharing among team members.</p>
+                </li>
+            </ol>
+        </section>
+        <section>
+            <h2>Learning Secure Software Development Practices</h2>
+            <p>IE-Safebank prioritizes secure development. The Cybersecurity engineer completed the Linux Foundation’s hands-on course with top scores to ensure robust practices.</p>
+        </section>
+        <section>
+            <h2>The 5 Implemented SAFEcode Frameworks</h2>
+            <p>Similar to OpenSSF, the “Fundamental Practices for Secure Software Development” emphasizes reducing vulnerabilities through 19 critical practices. This section highlights the implementations at IE-Safebank.</p>
+            <ol>
+                <li>
+                    <h3>Manage Security Findings</h3>
+                    <p>IE-Safebank implemented the OpenSSF scorecard tool to assess software security heuristics, scoring each from 0-10. This guided improvements in weak areas, ensuring customer safety.</p>
+                </li>
+                <li>
+                    <h3>Secure Coding Practices</h3>
+                    <p>Details to be included.</p>
+                </li>
+                <li>
+                    <h3>Testing and Validation</h3>
+                    <p>Details to be included.</p>
+                </li>
+                <li>
+                    <h3>Planning the Implementation and Deployment of Secure Development Practices</h3>
+                    <p>Details to be included.</p>
+                </li>
+            </ol>
+        </section>
+        <footer>
+            <p>For more details, visit the <a href="https://github.com/ossf/scorecard?tab=readme-ov-file#what-is-scorecard">OpenSSF Scorecard Documentation</a>.</p>
+        </footer>
+    </main>
+</body>
+</html>
