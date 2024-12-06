@@ -1,52 +1,52 @@
-@description('Name of the database alert rule')
-param dbAlertName string
+@description('Name of the availability alert rule')
+param availabilityAlertName string
 
-@description('Description of the database alert')
-param dbAlertDescription string
+@description('Description of the availability alert')
+param availabilityAlertDescription string
 
-@description('How bad the database alert is (0: Critical, 1: Error, 2: Warning, 3: Informational)')
-param dbAlertSeverity int
+@description('Severity of the availability alert (0: Critical, 1: Error, 2: Warning, 3: Informational)')
+param availabilityAlertSeverity int
 
-@description('Scope of the database resource to monitor')
-param dbResourceScope string
+@description('Scope of the resource to monitor for availability')
+param availabilityResourceScope string
 
-@description('Name of the Key Vault alert rule')
-param kvAlertName string
+@description('Name of the transaction speed alert rule')
+param transactionSpeedAlertName string
 
-@description('Description of the Key Vault alert')
-param kvAlertDescription string
+@description('Description of the transaction speed alert')
+param transactionSpeedAlertDescription string
 
-@description('How bad the Key Vault alert is')
-param kvAlertSeverity int
+@description('Severity of the transaction speed alert')
+param transactionSpeedAlertSeverity int
 
-@description('Scope of the Key Vault resource to monitor')
-param kvResourceScope string
+@description('Scope of the resource to monitor for transaction speed')
+param transactionSpeedResourceScope string
 
-@description('Name of the backend response alert rule')
-param beResponseAlertName string
+@description('Name of the API error rate alert rule')
+param apiErrorRateAlertName string
 
-@description('Description of the backend response alert')
-param beResponseAlertDescription string
+@description('Description of the API error rate alert')
+param apiErrorRateAlertDescription string
 
-@description('How bad the backend response alert is')
-param beResponseAlertSeverity int
+@description('Severity of the API error rate alert')
+param apiErrorRateAlertSeverity int
 
-@description('Scope of the backend resource to monitor')
-param beResourceScope string
+@description('Scope of the resource to monitor for API error rate')
+param apiErrorRateResourceScope string
 
 @description('Action Group Resource ID')
 param actionGroupId string
 
-// Database Alert Rule
-resource dbAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
-  name: dbAlertName
+// System Availability Alert Rule
+resource availabilityAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
+  name: availabilityAlertName
   location: 'global'
   properties: {
-    description: dbAlertDescription
-    severity: dbAlertSeverity
+    description: availabilityAlertDescription
+    severity: availabilityAlertSeverity
     enabled: true
     scopes: [
-      dbResourceScope
+      availabilityResourceScope
     ]
     evaluationFrequency: 'PT1M'
     windowSize: 'PT5M'
@@ -54,48 +54,9 @@ resource dbAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
       'odata.type': 'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria'
       allOf: [
         {
-          name: 'FailedConnections'
+          name: 'SystemAvailability'
           criterionType: 'StaticThresholdCriterion'
-          metricNamespace: 'Microsoft.DBforPostgreSQL/flexibleServers'
-          metricName: 'connections_failed'
-          operator: 'GreaterThanOrEqual'
-          threshold: 1
-          timeAggregation: 'Total'
-        }
-      ]
-    }
-    autoMitigate: true
-    actions: [
-      {
-        actionGroupId: actionGroupId
-        webHookProperties: {
-          customMessage: 'Database connection failures exceeded the threshold of 1. Please check immediately.'
-        }
-      }
-    ]
-  }
-}
-
-// Key Vault Alert Rule
-resource kvAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
-  name: kvAlertName
-  location: 'global'
-  properties: {
-    description: kvAlertDescription
-    severity: kvAlertSeverity
-    enabled: true
-    scopes: [
-      kvResourceScope
-    ]
-    evaluationFrequency: 'PT1M'
-    windowSize: 'PT5M'
-    criteria: {
-      'odata.type': 'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria'
-      allOf: [
-        {
-          name: 'KeyVaultAvailability'
-          criterionType: 'StaticThresholdCriterion'
-          metricNamespace: 'Microsoft.KeyVault/vaults'
+          metricNamespace: 'Microsoft.Web/sites'
           metricName: 'Availability'
           operator: 'LessThan'
           threshold: 100
@@ -108,34 +69,73 @@ resource kvAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
       {
         actionGroupId: actionGroupId
         webHookProperties: {
-          customMessage: 'Key Vault availability dropped below 100%. Please check immediately.'
+          customMessage: 'System availability dropped below 99.9%. Please investigate.'
         }
       }
     ]
   }
 }
 
-// Backend Response Time Alert Rule
-resource beResponseAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
-  name: beResponseAlertName
+// Transaction Speed Alert Rule
+resource transactionSpeedAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
+  name: transactionSpeedAlertName
   location: 'global'
   properties: {
-    description: beResponseAlertDescription
-    severity: beResponseAlertSeverity
+    description: transactionSpeedAlertDescription
+    severity: transactionSpeedAlertSeverity
     enabled: true
     scopes: [
-      beResourceScope
+      transactionSpeedResourceScope
     ]
     evaluationFrequency: 'PT1M'
     windowSize: 'PT5M'
     criteria: {
-      'odata.type': 'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria'
+      'odata.type': 'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria'
       allOf: [
         {
-          name: 'ResponseTime'
+          name: 'TransactionSpeed'
           criterionType: 'StaticThresholdCriterion'
           metricNamespace: 'Microsoft.Web/sites'
           metricName: 'HttpResponseTime'
+          operator: 'GreaterThan'
+          threshold: 2
+          timeAggregation: 'Average'
+        }
+      ]
+    }
+    autoMitigate: true
+    actions: [
+      {
+        actionGroupId: actionGroupId
+        webHookProperties: {
+          customMessage: 'Transaction speed exceeded 2 seconds. Please investigate.'
+        }
+      }
+    ]
+  }
+}
+
+// API Error Rate Alert Rule
+resource apiErrorRateAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
+  name: apiErrorRateAlertName
+  location: 'global'
+  properties: {
+    description: apiErrorRateAlertDescription
+    severity: apiErrorRateAlertSeverity
+    enabled: true
+    scopes: [
+      apiErrorRateResourceScope
+    ]
+    evaluationFrequency: 'PT1M'
+    windowSize: 'PT5M'
+    criteria: {
+      'odata.type': 'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria'
+      allOf: [
+        {
+          name: 'ApiErrorRate'
+          criterionType: 'StaticThresholdCriterion'
+          metricNamespace: 'Microsoft.Web/sites'
+          metricName: 'Http5xx'
           operator: 'GreaterThan'
           threshold: 1
           timeAggregation: 'Average'
@@ -147,9 +147,10 @@ resource beResponseAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
       {
         actionGroupId: actionGroupId
         webHookProperties: {
-          customMessage: 'Backend response time exceeded 1 second. Please check immediately.'
+          customMessage: 'API error rate exceeded 0.5%. Please investigate.'
         }
       }
     ]
   }
 }
+

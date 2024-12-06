@@ -213,3 +213,24 @@ module staticWebApp 'modules/static-webapp.bicep' = {
     tokenName: staticWebAppTokenName
   }
 }
+
+// Logic App
+
+@description('The name of the Logic App')
+param logicAppName string // Will be passed from the deployment pipeline
+
+@description('Slack Webhook URL for sending alerts')
+@secure()
+param slackWebhookUrl string // Dynamically passed during deployment
+
+module logicApp 'modules/slack-logicapp.bicep' = {
+  name: logicAppName
+  params: {
+    location: location
+    logicAppName: logicAppName
+    slackWebhookUrl: slackWebhookUrl
+  }
+  dependsOn: [
+    staticWebApp
+  ]
+}
