@@ -46,6 +46,23 @@ module appInsights 'modules/app-insights.bicep' = {
   }
 }
 
+@description('The name of the Workbook')
+param workbookName string
+
+@description('The JSON template for the Workbook')
+@secure()
+param workbookJson string
+
+module workbook 'modules/workbook.bicep' = {
+  name: 'workbookDeployment'
+  params: {
+    workbookName: workbookName
+    location: resourceGroup().location
+    workbookJson: workbookJson
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId
+  }
+  dependsOn: [logAnalyticsWorkspace]
+}
 
 // Key Vault
 @sys.description('The name of the Key Vault')
