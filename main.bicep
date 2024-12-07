@@ -49,7 +49,7 @@ module appInsights 'modules/app-insights.bicep' = {
 @description('The name of the Workbook')
 param workbookName string
 
-@description('The JSON template for the Workbook')
+@description('The JSON template')
 @secure()
 param workbookJson string
 
@@ -217,11 +217,11 @@ module staticWebApp 'modules/static-webapp.bicep' = {
 // Logic App
 
 @description('The name of the Logic App')
-param logicAppName string // Will be passed from the deployment pipeline
+param logicAppName string
 
 @description('Slack Webhook URL for sending alerts')
 @secure()
-param slackWebhookUrl string // Dynamically passed during deployment
+param slackWebhookUrl string
 
 module logicApp 'modules/slack-logicapp.bicep' = {
   name: logicAppName

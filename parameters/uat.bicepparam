@@ -52,7 +52,7 @@ param appInsightsName = 'safebank-ai-uat'
 param appServicePlanName = 'safebank-asp-uat'
 
 // Workbook Parameters
-param workbookName = 'SafeBankWorkbookUAT'
+param workbookName = 'safebank-workbook-dev'
 param workbookJson = loadTextContent('../templates/SafeBankWorkbook.workbook')
 
 param logicAppName = 'safebank-la-dev'

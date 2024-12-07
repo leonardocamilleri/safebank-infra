@@ -69,7 +69,7 @@ resource availabilityAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
       {
         actionGroupId: actionGroupId
         webHookProperties: {
-          customMessage: 'System availability dropped below 99.9%. Please investigate.'
+          customMessage: 'System availability dropped below 100%. Please investigate.'
         }
       }
     ]
@@ -147,7 +147,7 @@ resource apiErrorRateAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
       {
         actionGroupId: actionGroupId
         webHookProperties: {
-          customMessage: 'API error rate exceeded 0.5%. Please investigate.'
+          customMessage: 'API error rate exceeded 1%. Please investigate.'
         }
       }
     ]
