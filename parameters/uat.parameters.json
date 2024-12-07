@@ -8,6 +8,12 @@
         "postgreSQLServerName": {
             "value": "safebank-dbsrv-uat"
         },
+        "postgreSQLAdminLogin": {
+            "value": "iebankdbadmin"
+        },
+        "postgreSQLAdminPassword": {
+            "value": "IE.Bank.DB.Admin.Pa$$"
+        },
         "postgreSQLDatabaseName": {
             "value": "safebank-db-uat"
         },
@@ -43,6 +49,12 @@
         },
         "appInsightsName": {
             "value": "safebank-ai-uat"
+        },
+        "slackWebhookUrl": {
+            "value": "https://hooks.slack.com/services/YOUR/UAT/SLACK/WEBHOOK"
+        },
+        "logicAppName": {
+            "value": "safebank-alert-logicapp-uat"
         }
     }
 }

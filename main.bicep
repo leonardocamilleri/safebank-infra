@@ -1,18 +1,25 @@
 @sys.description('The environment type (nonprod or prod)')
+@secure()
+param slackWebhookUrl string // Slack webhook for notifications
+
 @allowed([
   'nonprod'
   'prod'
 ])
 param environmentType string = 'nonprod'
+
 @sys.description('The user alias to add to the deployment name')
 param userAlias string = 'safebank'
+
 @sys.description('The Azure location where the resources will be deployed')
 param location string = 'northeurope'
+
+@sys.description('The name of the Logic App')
+param logicAppName string
 
 // Log Analytics Workspace
 @sys.description('The name of the Log Analytics Workspace')
 param logAnalyticsWorkspaceName string
-
 
 module logAnalyticsWorkspace 'modules/log-analytics-workspace.bicep' = {
   name: 'logAnalyticsWorkspace-${userAlias}'
@@ -26,7 +33,6 @@ module logAnalyticsWorkspace 'modules/log-analytics-workspace.bicep' = {
     }
   }
 }
-
 
 // App Insights
 @sys.description('The name of the Application Insights instance')
@@ -45,7 +51,6 @@ module appInsights 'modules/app-insights.bicep' = {
     workspaceResourceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId // Link to the Log Analytics Workspace
   }
 }
-
 
 // Key Vault
 @sys.description('The name of the Key Vault')
@@ -89,7 +94,6 @@ module containerRegistry 'modules/container-registry.bicep' = {
   }
 }
 
-
 // App Service Plan
 @sys.description('The name of the App Service Plan')
 param appServicePlanName string
@@ -113,7 +117,7 @@ param adminUsername string = '' // Default to empty string which will be filled 
 @secure()
 param adminPassword string = ''
 
-resource keyVaultReference 'Microsoft.KeyVault/vaults@2023-07-01'existing = {
+resource keyVaultReference 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
   name: keyVaultName
 }
 
@@ -161,13 +165,12 @@ module postgreSQLServer 'modules/postgre-sql-server.bicep' = {
   ]
 }
 
-
 // PostgreSQL Database
 @sys.description('The name of the PostgreSQL Database')
 param postgreSQLDatabaseName string
 
 module postgreSQLDatabase 'modules/postgre-sql-db.bicep' = {
-  name: postgreSQLDatabaseName
+  name: 'postgreSQLDatabase-${userAlias}'
   params: {
     serverName: postgreSQLServerName
     name: postgreSQLDatabaseName
@@ -195,4 +198,28 @@ module staticWebApp 'modules/static-webapp.bicep' = {
     keyVaultResourceId: keyVault.outputs.keyVaultId
     tokenName: staticWebAppTokenName
   }
+}
+
+module logicApp 'modules/logic-app.bicep' = {
+  name: 'logicApp-${userAlias}'
+  params: {
+    logicAppName: logicAppName
+    slackWebhookUrl: slackWebhookUrl
+    location: location
+  }
+}
+
+// Ensure the output exists in logic-app.bicep
+output logicAppId string = logicApp.outputs.logicAppId
+
+module alerts 'modules/alerts.bicep' = {
+  name: 'alerts-${userAlias}'
+  params: {
+    slackWebhookUrl: slackWebhookUrl
+    logicAppResourceId: logicApp.outputs.logicAppId // Use the output here
+    location: location
+  }
+  dependsOn: [
+    logicApp // Explicitly depend on the logicApp module
+  ]
 }

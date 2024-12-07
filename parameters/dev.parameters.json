@@ -49,6 +49,12 @@
         },
         "appInsightsName": {
             "value": "safebank-ai-dev"
+        },
+        "slackWebhookUrl": {
+            "value": "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+        },
+        "logicAppName": {
+            "value": "safebank-alert-logicapp-dev"
         }
     }
 }

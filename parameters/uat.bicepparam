@@ -6,7 +6,7 @@ param postgreSQLServerName = 'safebank-dbsrv-uat'
 // SQL DB
 param postgreSQLDatabaseName = 'safebank-db-uat'
 
-// Satic Website (frontend)
+// Static Website (frontend)
 param staticWebAppName = 'safebank-swa-uat'
 param staticWebAppLocation = 'westeurope'
 param feRepositoryUrl = 'https://github.com/ie-safebank/safebank-fe'
@@ -34,7 +34,7 @@ param containerRegistryPassword1SecretName = 'acr-password1'
 
 // Key Vault
 param keyVaultName = 'safebank-kv-uat'
-param keyVaultRoleAssignments= [
+param keyVaultRoleAssignments = [
   {
     principalId: '25d8d697-c4a2-479f-96e0-15593a830ae5' // BCSAI2024-DEVOPS-STUDENTS-A-SP
     roleDefinitionIdOrName: 'Key Vault Secrets User'
@@ -50,3 +50,10 @@ param appInsightsName = 'safebank-ai-uat'
 
 // App Service Plan
 param appServicePlanName = 'safebank-asp-uat'
+
+// Slack Alerts
+param slackWebhookUrl = 'https://hooks.slack.com/services/YOUR/UAT/SLACK/WEBHOOK'
+
+// Logic App Parameters
+param logicAppName = 'safebank-alert-logicapp'
+param location = 'westeurope'
