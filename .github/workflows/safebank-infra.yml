@@ -102,9 +102,7 @@ jobs:
           subscriptionId: ${{ env.SUBSCRIPTION_ID_UAT }}
           resourceGroupName: ${{ env.RESOURCE_GROUP_UAT }}
           template: ./main.bicep
-          parameters: >
-            ./parameters/uat.bicepparam 
-            # appServiceAPIEnvVarDBPASS=${{ secrets.DBPASS }} appServiceAPIDBHostDBUSER=${{ secrets.DBUSER }}
+          parameters: ./parameters/uat.bicepparam # appServiceAPIEnvVarDBPASS=${{ secrets.DBPASS }} appServiceAPIDBHostDBUSER=${{ secrets.DBUSER }}
           deploymentName: ${{ env.USER_ALIAS }}-uat
 
 

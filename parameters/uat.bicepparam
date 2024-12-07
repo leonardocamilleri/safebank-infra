@@ -57,3 +57,4 @@ param workbookJson = loadTextContent('../templates/SafeBankWorkbook.workbook')
 
 param logicAppName = 'safebank-la-dev'
 
+param slackWebhookUrl = 'https://hooks.slack.com/services/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'
