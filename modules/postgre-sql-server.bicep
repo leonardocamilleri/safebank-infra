@@ -67,7 +67,26 @@ resource postgreSQLDiagnosticSettings 'Microsoft.Insights/diagnosticSettings@202
         category: 'PostgreSQLLogs'
         enabled: true
 
-        // Add all the logs we want to use
+      }
+      {
+        category: 'PostgreSQLFlexSessions'
+        enabled: true
+      }
+      {
+        category: 'PostgreSQLFlexQueryStoreRuntime'
+        enabled: true
+      }
+      {
+        category: 'PostgreSQLFlexQueryStoreWaitStats'
+        enabled: true
+      }
+      {
+        category: 'PostgreSQLFlexTableStats'
+        enabled: true
+      }
+      {
+        category: 'PostgreSQLFlexDatabaseXacts'
+        enabled: true
       }
     ]
     metrics: [

@@ -9,7 +9,7 @@ param postgreSQLDatabaseName = 'safebank-db-dev'
 // Satic Website (frontend)
 param staticWebAppName = 'safebank-swa-dev'
 param staticWebAppLocation = 'westeurope'
-param feRepositoryUrl = 'https://github.com/ie-safebank/safebank-fe'
+// param feRepositoryUrl = 'https://github.com/ie-safebank/safebank-fe'
 param staticWebAppTokenName = 'swa-token'
 
 // Container Instance (backend)
@@ -50,3 +50,12 @@ param appInsightsName = 'safebank-ai-dev'
 
 // App Service Plan
 param appServicePlanName = 'safebank-asp-dev'
+
+// Workbook Parameters
+param workbookName = 'safebank-workbook-dev'
+param workbookJson = loadTextContent('../templates/safe-bank-workbook.workbook')
+
+param logicAppName = 'safebank-la-dev'
+
+param slackWebhookUrl = 'https://hooks.slack.com/services/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'
+

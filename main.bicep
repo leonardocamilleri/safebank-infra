@@ -46,6 +46,23 @@ module appInsights 'modules/app-insights.bicep' = {
   }
 }
 
+@description('The name of the Workbook')
+param workbookName string
+
+@description('The JSON template')
+@secure()
+param workbookJson string
+
+module workbook 'modules/workbook.bicep' = {
+  name: 'workbookDeployment'
+  params: {
+    workbookName: workbookName
+    location: resourceGroup().location
+    workbookJson: workbookJson
+    logAnalyticsWorkspaceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId
+  }
+  dependsOn: [logAnalyticsWorkspace]
+}
 
 // Key Vault
 @sys.description('The name of the Key Vault')
@@ -87,6 +104,9 @@ module containerRegistry 'modules/container-registry.bicep' = {
     password1SecretName: containerRegistryPassword1SecretName
     workspaceId: logAnalyticsWorkspace.outputs.logAnalyticsWorkspaceId
   }
+  dependsOn: [
+    keyVault
+  ]
 }
 
 
@@ -182,8 +202,6 @@ module postgreSQLDatabase 'modules/postgre-sql-db.bicep' = {
 param staticWebAppName string
 @sys.description('The location of the Static Web App')
 param staticWebAppLocation string
-@sys.description('The URL of the repo with the Web App')
-param feRepositoryUrl string
 param staticWebAppTokenName string
 
 module staticWebApp 'modules/static-webapp.bicep' = {
@@ -191,8 +209,28 @@ module staticWebApp 'modules/static-webapp.bicep' = {
   params: {
     name: staticWebAppName
     location: staticWebAppLocation
-    url: feRepositoryUrl
     keyVaultResourceId: keyVault.outputs.keyVaultId
     tokenName: staticWebAppTokenName
   }
+}
+
+// Logic App
+
+@description('The name of the Logic App')
+param logicAppName string
+
+@description('Slack Webhook URL for sending alerts')
+@secure()
+param slackWebhookUrl string
+
+module logicApp 'modules/slack-logicapp.bicep' = {
+  name: logicAppName
+  params: {
+    location: location
+    logicAppName: logicAppName
+    slackWebhookUrl: slackWebhookUrl
+  }
+  dependsOn: [
+    staticWebApp
+  ]
 }
