@@ -2,10 +2,9 @@ name: Key Vault Testing
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - './modules/key-vault.bicep/**' 
-      - './parameters/key-vault-tests.json/**'
+  pull_request:
+    branches:
+      - main
 
 
 env:
