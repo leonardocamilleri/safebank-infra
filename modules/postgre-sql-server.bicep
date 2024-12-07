@@ -4,8 +4,8 @@ param postgresSQLAdminServicePrincipalObjectId string
 param postgresSQLAdminServicePrincipalName string
 
 param WorkspaceId string
-// @secure()
-// param adminPassword string
+//@secure()
+//param adminPassword string
 
 resource postgreSQLServer 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' = {
   name: name
