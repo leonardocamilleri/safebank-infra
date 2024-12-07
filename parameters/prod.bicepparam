@@ -52,9 +52,9 @@ param appInsightsName = 'safebank-ai-prod'
 param appServicePlanName = 'safebank-asp-prod'
 
 // Workbook Parameters
-param workbookName = 'safebank-workbook-dev'
+param workbookName = 'safebank-workbook-prod'
 param workbookJson = loadTextContent('../templates/safe-bank-workbook.workbook')
 
-param logicAppName = 'safebank-la-dev'
+param logicAppName = 'safebank-la-prod'
 
-param slackWebhookUrl = 'https://hooks.slack.com/services/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'
+param slackWebhookUrl = ''

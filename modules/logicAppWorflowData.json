@@ -20,7 +20,7 @@
         "type": "Http",
         "inputs": {
           "method": "POST",
-          "uri": "@{parameters('slackWebhookUrl')}",
+          "uri": "slackWebhookUrl",
           "headers": {
             "Content-Type": "application/json"
           },
